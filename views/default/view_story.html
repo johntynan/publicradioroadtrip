@@ -1,0 +1,32 @@
+{{extend 'layout.html'}}
+
+<!-- iframe src="http://api.npr.org/query?&searchTerm={{=story.story_id}}&dateType=story&output=html&apiKey=MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004" width="100%" height="150"> 
+</iframe -->
+
+<h2>Story</h2>
+<div>
+{{=pubDate}} {{=teaser}}
+
+<a href="{{=link}}">Read the story at NPR.org</a>
+</div>
+
+
+<h2>Comment</h2>
+<div>
+{{=story.comment}}
+</div>
+
+<!-- 
+<h2>Results</h2>
+<div>
+{{=results}}
+</div> -->
+
+<h2>Roadtrip</h2>
+<div>
+This story is part of the Roadtrip: <a href="../view_roadtrip/{{=story.roadtrip_id}}">{{=story.roadtrip_id}}</a>
+</div>
+
+<!--
+{{=BEAUTIFY(response._vars)}}
+-->

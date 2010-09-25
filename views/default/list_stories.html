@@ -1,0 +1,23 @@
+{{response.files.append(URL(r=request,c='static',f='jquery.dataTables.min.js'))}}
+{{response.files.append(URL(r=request,c='static',f='demo_table.css'))}}
+{{extend 'layout.html'}}
+
+<table id="list_stories">
+
+<th>Story ID</th>
+<th>Title</th>
+<th>Roadtrip</th>
+<th>Actions</th>
+{{for story in stories:}}
+<tr>
+    <td><a href="{{=URL(r=request,f='view_story',args=story.id)}}">{{=story.id}}</a></td>
+    <td><a href="{{=URL(r=request,f='view_story',args=story.id)}}">{{=story.title}}</a></td>
+        <td><a href="{{=URL(r=request,f='view_roadtrip',args=story.roadtrip_id)}}">{{=story.roadtrip_id}}</a></td>
+    <td><a href="{{=URL(r=request,f='edit_story',args=story.id)}}">Edit Story</a>
+    </td>
+</tr>
+{{pass}}
+</table>
+<!--
+{{=BEAUTIFY(response._vars)}}
+-->
