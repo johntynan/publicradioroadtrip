@@ -36,10 +36,6 @@ db.define_table(
     'roadtrip', 
     Field('name'), 
     Field('description', 'text'),
-    Field('starting_latitude'),
-    Field('starting_longitude'),
-    Field('ending_latitude'),
-    Field('ending_longitude'),
     Field('created_by',default=me,writable=False,readable=False),
     Field('created_on','datetime',default=request.now,writable=False,readable=False)
     )

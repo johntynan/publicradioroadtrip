@@ -61,7 +61,7 @@ def add_roadtrip():
 @auth.requires_login()
 def add_story():
 
-    form = SQLFORM(db.story)
+    form = SQLFORM(db.story, _id='story_form')
 
     if form.accepts(request.vars, session): 
         response.flash='record inserted'
