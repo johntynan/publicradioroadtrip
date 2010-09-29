@@ -53,4 +53,4 @@ db.define_table(
     Field('created_on','datetime', default=request.now, writable=False, readable=False)
     )
     
-# db.story.roadtrip_id.requires=IS_IN_DB(db(db.roadtrip.created_by==auth.user_id),'roadtrip.id','%(name)s', multiple=True) db.story.roadtrip_id.requires=IS_IN_DB(db(db.roadtrip.created_by==auth.user_id),'roadtrip.id','%(name)s', multiple=True) 
+# db.story.roadtrip_id.requires=IS_IN_DB(db(db.roadtrip.created_by==auth.user_id),'roadtrip.id','%(name)s', multiple=True) db.story.roadtrip_id.requires=IS_IN_DB(db(db.roadtrip.created_by==auth.user_id),'roadtrip.id','%(name)s') 
