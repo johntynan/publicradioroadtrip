@@ -34,7 +34,7 @@ def index():
     
 @auth.requires_login()
 def list_roadtrips():
-    roadtrips=db(db.roadtrip.created_by==auth.user.id).select(orderby=db.roadtrip.name)
+    roadtrips=db(db.roadtrip.created_by==auth.user.id).select(orderby=db.roadtrip.title)
     return dict(roadtrips=roadtrips)
 
 @auth.requires_login()
@@ -109,7 +109,7 @@ def view_story():
 def view_roadtrip():
     roadtrip_id=request.args(0)
     roadtrip=db.roadtrip[roadtrip_id] or redirect(error_page)
-    stories=db(db.story.roadtrip_id==roadtrip_id).select(orderby=db.story.title)
+    stories=db(db.story.roadtrip==roadtrip_id).select(orderby=db.story.title)
     return dict(roadtrip=roadtrip, stories=stories)
 
 @auth.requires_login()
