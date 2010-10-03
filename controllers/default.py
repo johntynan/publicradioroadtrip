@@ -84,7 +84,7 @@ def view_story():
     story=db.story[story_id] or redirect(error_page)
 
     # get the story from the npr api as a json string
-    json = api.query(story.story_id)
+    json = api.query(story.npr_id)
 
     # turn the json string into a dictionary
     results = json
