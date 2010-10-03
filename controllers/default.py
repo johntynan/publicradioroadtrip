@@ -23,7 +23,6 @@ def url(f, args=[]): return URL(r=request,f=f,args=args)
 
 error_page=URL(r=request,f='error')
 
-
 def index():
     """
     example action using the internationalization operator T and flash

@@ -8,9 +8,10 @@
 <th>Description</th>
 {{for roadtrip in roadtrips:}}
 <tr>
-    <td><a href="{{=URL(r=request,f='view_roadtrip',args=roadtrip_id)}}">{{=roadtrip.title}}</a></td>
+    <td><a href="{{=URL(r=request,f='view_roadtrip',args=roadtrip.id)}}">{{=roadtrip.title}}</a></td>
     <td>{{=roadtrip.description}}</td>
-    <td><a href="{{=URL(r=request,f='edit_roadtrip',args=roadtrip_id)}}">Edit roadtrip</a>
+    <td><a href="{{=URL(r=request,f='edit_roadtrip',args=roadtrip.id)}}">Edit roadtrip</a>
+
     </td>
 </tr>
 {{pass}}
@@ -18,3 +19,4 @@
 <!--
 {{=BEAUTIFY(response._vars)}}
 -->
+

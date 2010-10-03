@@ -2,34 +2,21 @@
 ## This scaffolding model makes your app work on Google App Engine too
 #########################################################################
 
-#import sys
-#import os.path
-#site_packages_path = os.path.join(request.env.web2py_path,'site-packages')
-#if sys.path[0] != site_packages_path:
-#    sys.path.insert(0, site_packages_path)
-
-# if running on Google App Engine
-#if settings.web2py_runtime_gae:
-#    from gluon.contrib.gql import *      
-    # connect to Go0ogle BigTable
-#    db = DAL('gae')
-    # and store sessions there
- #   session.connect(request, response, db=db)  
-#else:
-    # if not, use SQLite or other DB
-    # db = DAL('sqlite://storage.sqlite')  
-
-db = DAL('sqlite://storage.sqlite')
+import sys
+import os.path
+site_packages_path = os.path.join(request.env.web2py_path,'site-packages')
+if sys.path[0] != site_packages_path:
+    sys.path.insert(0, site_packages_path)
 
 from gluon.tools import *
 auth = Auth(globals(),db)
 auth.define_tables()
 crud = Crud(globals(),db)
+
 if auth.is_logged_in():
     user_id = auth.user.id
 else:
     user_id = None
-
 
 db.define_table(
     'roadtrip', 
