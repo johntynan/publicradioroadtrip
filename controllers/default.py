@@ -52,7 +52,7 @@ def add_roadtrip():
         roadtrip_id = dict(form.vars)['id']
         roadtrip = db(db.roadtrip.id==roadtrip_id).select()
 
-        redirect(URL(r=request, f='index'))
+        redirect(URL(r=request, f='list_roadtrips'))
 
     elif form.errors: response.flash='form errors'
     return dict(form=form)
@@ -62,13 +62,20 @@ def add_story():
 
     form = SQLFORM(db.story, _id='story_form')
 
-    if form.accepts(request.vars, session): 
+    if form.accepts(request.vars, session):
+
         response.flash='record inserted'
+
+        # An attempt to change the list to a string, then strip out the pipe character:
+        # nprid = request.vars['nprid'][0]
+        # nprid = str(nprid[0]).strip('|')
+        #  title = request.vars['title'][0]
+        # title = str(title[0]).strip('|')
 
         story_id = dict(form.vars)['id']
         story = db(db.story.id==story_id).select()
 
-        redirect(URL(r=request, f='index'))
+        redirect(URL(r=request, f='list_stories'))
 
     elif form.errors: response.flash='form errors'
     return dict(form=form)    
@@ -83,8 +90,15 @@ def view_story():
     story_id=request.args(0)
     story=db.story[story_id] or redirect(error_page)
 
+    # Stripping out the pipe character:
+    nprid = story.nprid
+    nprid = str(nprid).strip('|')
+
     # get the story from the npr api as a json string
-    json = api.query(story.npr_id)
+    # json = api.query(story.nprid)
+
+    # since the value for story.nprid is not saved as cleanly as it should be:
+    json = api.query(nprid)
 
     # turn the json string into a dictionary
     results = json

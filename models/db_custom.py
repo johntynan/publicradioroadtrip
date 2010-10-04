@@ -30,9 +30,9 @@ db.define_table(
 db.define_table(
     'story', 
     Field('story_id', 'integer', writable=False, readable=False),
-    Field('npr_id'),
-    Field('roadtrip','list:reference roadtrip'),
+    Field('nprid'),
     Field('title'), 
+    Field('roadtrip','list:reference roadtrip'),
     Field('latitude'),
     Field('longitude'),
     Field('comment', 'text'),
