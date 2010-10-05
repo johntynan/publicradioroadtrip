@@ -33,7 +33,7 @@ def index():
     
 @auth.requires_login()
 def list_roadtrips():
-    roadtrips=db(db.roadtrip.created_by==auth.user.id).select(orderby=db.roadtrip.title)
+    roadtrips=db(db.roadtrip.created_by==auth.user_id).select(orderby=db.roadtrip.title)
     return dict(roadtrips=roadtrips)
 
 @auth.requires_login()
@@ -82,13 +82,13 @@ def add_story():
 
 @auth.requires_login()
 def list_stories():
-    stories=db(db.story.created_by==auth.user.id).select(orderby=db.story.title)
+    stories=db(db.story.created_by==auth.user_id).select(orderby=db.story.title)
     return dict(stories=stories)
     
 @auth.requires_login()
 def view_story():
-    story_id=request.args(0)
-    story=db.story[story_id] or redirect(error_page)
+    id=request.args(0)
+    story=db.story[id] or redirect(error_page)
 
     # Stripping out the pipe character:
     nprid = story.nprid
@@ -120,9 +120,9 @@ def view_story():
 
 @auth.requires_login()
 def view_roadtrip():
-    roadtrip_id=request.args(0)
-    roadtrip=db.roadtrip[roadtrip_id] or redirect(error_page)
-    stories=db(db.story.roadtrip==roadtrip_id).select(orderby=db.story.title)
+    id=request.args(0)
+    roadtrip=db.roadtrip[id] or redirect(error_page)
+    stories=db(db.story.roadtrip==id).select(orderby=db.story.title)
     return dict(roadtrip=roadtrip, stories=stories)
 
 @auth.requires_login()

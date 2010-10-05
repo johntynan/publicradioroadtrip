@@ -2,11 +2,11 @@
 ## This scaffolding model makes your app work on Google App Engine too
 #########################################################################
 
-import sys
-import os.path
-site_packages_path = os.path.join(request.env.web2py_path,'site-packages')
-if sys.path[0] != site_packages_path:
-    sys.path.insert(0, site_packages_path)
+# import sys
+# import os.path
+# site_packages_path = os.path.join(request.env.web2py_path,'site-packages')
+# if sys.path[0] != site_packages_path:
+#    sys.path.insert(0, site_packages_path)
 
 from gluon.tools import *
 auth = Auth(globals(),db)
@@ -20,7 +20,6 @@ else:
 
 db.define_table(
     'roadtrip', 
-    Field('roadtrip_id', 'integer', writable=False, readable=False),
     Field('title'),
     Field('description', 'text'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
@@ -29,7 +28,6 @@ db.define_table(
                             
 db.define_table(
     'story', 
-    Field('story_id', 'integer', writable=False, readable=False),
     Field('nprid'),
     Field('title'), 
     Field('roadtrip','list:reference roadtrip'),
