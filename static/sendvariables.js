@@ -4,6 +4,8 @@ story_url = window.location
 // story_id = window.location.search
 story_title = document.title
 
+story_title = escape(story_title);
+
 // alert(story_hostname);
 // alert(story_url);
 // alert(story_id);
