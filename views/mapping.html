@@ -111,10 +111,7 @@
   }
  
   function addMarkerAtCenter() {
-    // alert(map.getCenter().lat());
-    // alert(map.getCenter().lng());
-    frm.elements['story_latitude'].innerText=map.getCenter().lat();
-    frm.elements['story_longitude'].innerText=map.getCenter().lat();
+
     var marker = new google.maps.Marker({
         position: map.getCenter(),
         map: map
@@ -136,6 +133,17 @@
     google.maps.event.addListener(marker, 'click', function() {
       infowindow.open(map,marker);
     });
+
+
+    alert(map.getCenter().lat());
+    alert(map.getCenter().lng());
+    // frm.elements['story_latitude'].innerText=map.getCenter().lat();
+    // frm.elements['story_longitude'].innerText=map.getCenter().lat();
+    document.story_form.story_latitude.value = map.getCenter().lat()
+    document.story_form.story_longitude.value = map.getCenter().lng()
+    // document.story_form['story_latitude'].innerText=map.getCenter().lat();
+    // document.story_form['story_longitude'].innerText=map.getCenter().lat();
+
   }
  
 </script> 

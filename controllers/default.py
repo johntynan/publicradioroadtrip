@@ -60,18 +60,20 @@ def add_roadtrip():
 @auth.requires_login()
 def add_story():
 
+    # form = SQLFORM(db.story)
     form = SQLFORM(db.story, _id='story_form')
 
     if request.vars.nprid:
 
         nprid = request.vars['nprid']
-        # nprid = str(nprid).strip('|')
+        nprid = str(nprid).strip('|')
+        form.vars.nprid = ''
         form.vars.nprid = nprid
 
     if request.vars.title:
-
         title = request.vars['title']
-        # title = str(title).strip('|')
+        title = str(title).strip('|')
+        form.vars.title = ''
         form.vars.title = title
 
     if form.accepts(request.vars, session):
