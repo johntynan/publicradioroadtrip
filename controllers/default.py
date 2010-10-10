@@ -60,23 +60,16 @@ def add_roadtrip():
 @auth.requires_login()
 def add_story():
 
-    # form = SQLFORM(db.story)
+
     form = SQLFORM(db.story, _id='story_form')
 
     if request.vars.nprid:
-
-        nprid = request.vars['nprid']
-        nprid = str(nprid).strip('|')
-        form.vars.nprid = ''
-        form.vars.nprid = nprid
+        form.vars.nprid = request.vars.nprid
 
     if request.vars.title:
-        title = request.vars['title']
-        title = str(title).strip('|')
-        form.vars.title = ''
-        form.vars.title = title
+        form.vars.title = request.vars.title
 
-    if form.accepts(request.vars, session):
+    if form.accepts(request.post_vars, session):
 
         response.flash='record inserted'
 
@@ -113,24 +106,27 @@ def view_story():
     results = gluon.contrib.simplejson.loads(results)
 
     # get the teaser for the story
+    # teaser = 'Some sample text.'
     teaser = results['list']['story'][0]['teaser'].values()[0]
 
     # get the teaser for the story
+    # link = 'http://www.npr.com'
     link = results['list']['story'][0]['link'][2].values()[0]
 
     # just a test to see that the site-packages folder is in the sys.path
     # teaser = str(site_packages_path)
 
     # get the pubdDate for the story
+    # pubDate = 'Sat, 09 Oct 2010 14:05:00 -0400'
     pubDate = results['list']['story'][0]['pubDate'].values()[0]
 
     return dict(story=story,json=json,results=results,teaser=teaser,link=link,pubDate=pubDate)
 
 @auth.requires_login()
 def view_roadtrip():
-    id=request.args(0)
-    roadtrip=db.roadtrip[id] or redirect(error_page)
-    stories=db(db.story.roadtrip==id).select(orderby=db.story.title)
+    roadtrip_id=int(request.args(0))
+    roadtrip=db.roadtrip[roadtrip_id] or redirect(error_page)
+    stories=db(db.story.roadtrip[roadtrip_id]).select(orderby=db.story.title)
     return dict(roadtrip=roadtrip, stories=stories)
 
 @auth.requires_login()
