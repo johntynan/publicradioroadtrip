@@ -62,15 +62,21 @@ def add_story():
 
     form = SQLFORM(db.story, _id='story_form')
 
+    if request.vars.nprid:
+
+        nprid = request.vars['nprid']
+        # nprid = str(nprid).strip('|')
+        form.vars.nprid = nprid
+
+    if request.vars.title:
+
+        title = request.vars['title']
+        # title = str(title).strip('|')
+        form.vars.title = title
+
     if form.accepts(request.vars, session):
 
         response.flash='record inserted'
-
-        # An attempt to change the list to a string, then strip out the pipe character:
-        # nprid = request.vars['nprid'][0]
-        # nprid = str(nprid[0]).strip('|')
-        #  title = request.vars['title'][0]
-        # title = str(title[0]).strip('|')
 
         story_id = dict(form.vars)['id']
         story = db(db.story.id==story_id).select()
