@@ -61,7 +61,7 @@ def add_roadtrip():
 def add_story():
 
 
-    form = SQLFORM(db.story, _id='story_form')
+    form = SQLFORM(db.story, _name='story_form')
 
     if request.vars.nprid:
         form.vars.nprid = request.vars.nprid
@@ -91,15 +91,8 @@ def view_story():
     id=request.args(0)
     story=db.story[id] or redirect(error_page)
 
-    # Stripping out the pipe character:
-    nprid = story.nprid
-    nprid = str(nprid).strip('|')
-
     # get the story from the npr api as a json string
-    # json = api.query(story.nprid)
-
-    # since the value for story.nprid is not saved as cleanly as it should be:
-    json = api.query(nprid)
+    json = api.query(story.nprid)
 
     # turn the json string into a dictionary
     results = json
