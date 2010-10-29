@@ -8,16 +8,21 @@
 ## - call exposes all registered services (none by default)
 #########################################################################  
 
-import gluon.contrib.simplejson
 
-from kcrw.nprapi.story import (StoryAPI,
-                               StoryMapping,
-                               NPRError,
-                               OUTPUT_FORMATS,
-                               QUERY_TERMS,
-                               )
 
-api = StoryAPI('MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004', 'JSON')
+
+# since there was some trouble using the KCRW.NPRAPI module on GAE, I am removing it completely... for the moment.
+
+# this is what I should have been able to do:
+# import gluon.contrib.simplejson
+# from kcrw.nprapi.story import (StoryAPI,
+#                          StoryMapping,
+#                          NPRError,
+#                          OUTPUT_FORMATS,
+#                          QUERY_TERMS,
+#                          )
+#
+# api = StoryAPI('MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004', 'JSON')
 
 def url(f, args=[]): return URL(r=request,f=f,args=args)
 
@@ -33,8 +38,19 @@ def index():
     
 @auth.requires_login()
 def list_roadtrips():
+
+    # just a test to see that the site-packages folder is in the sys.path
+    # test = str(site_packages_path)
+    # test = []
+    # for p in sys.path:
+    #     if os.path.isdir(p):
+    #         test.append(os.listdir(p))
+            # print os.listdir(p)
+
+    test = ''
+
     roadtrips=db(db.roadtrip.created_by==auth.user_id).select(orderby=db.roadtrip.title)
-    return dict(roadtrips=roadtrips)
+    return dict(roadtrips=roadtrips, test=test)
 
 @auth.requires_login()
 def edit_roadtrip():
@@ -91,35 +107,37 @@ def view_story():
     id=request.args(0)
     story=db.story[id] or redirect(error_page)
 
+    # note: gutting kcrw.nprapi module from this part of the code.  At least until I am able to get Google App Engine to find the module from the appropriate site-packages directory.
+
     # get the story from the npr api as a json string
-    json = api.query(story.nprid)
+    # json = api.query(story.nprid)
 
     # turn the json string into a dictionary
-    results = json
-    results = gluon.contrib.simplejson.loads(results)
+    json = 'Some sample text.'
+    results = 'Some sample text.'
+    # results = json
+    # results = gluon.contrib.simplejson.loads(results)
 
     # get the teaser for the story
-    # teaser = 'Some sample text.'
-    teaser = results['list']['story'][0]['teaser'].values()[0]
+    teaser = 'Some sample text.'
+    # teaser = results['list']['story'][0]['teaser'].values()[0]
 
     # get the teaser for the story
-    # link = 'http://www.npr.com'
-    link = results['list']['story'][0]['link'][2].values()[0]
-
-    # just a test to see that the site-packages folder is in the sys.path
-    # teaser = str(site_packages_path)
+    link = 'http://www.npr.com'
+    # link = results['list']['story'][0]['link'][2].values()[0]
 
     # get the pubdDate for the story
-    # pubDate = 'Sat, 09 Oct 2010 14:05:00 -0400'
-    pubDate = results['list']['story'][0]['pubDate'].values()[0]
+    pubDate = 'Sat, 09 Oct 2010 14:05:00 -0400'
+    # pubDate = results['list']['story'][0]['pubDate'].values()[0]
 
     return dict(story=story,json=json,results=results,teaser=teaser,link=link,pubDate=pubDate)
 
 @auth.requires_login()
 def view_roadtrip():
+    stories = {}
     roadtrip_id=int(request.args(0))
-    roadtrip=db.roadtrip[roadtrip_id] or redirect(error_page)
-    stories=db(db.story.roadtrip[roadtrip_id]).select(orderby=db.story.title)
+    roadtrip = db.roadtrip[roadtrip_id] or redirect(error_page)
+    stories=db(db.story.roadtrip.contains(roadtrip_id)).select(orderby=db.story.title)
     return dict(roadtrip=roadtrip, stories=stories)
 
 @auth.requires_login()

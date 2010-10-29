@@ -6,7 +6,8 @@
 # import os.path
 # site_packages_path = os.path.join(request.env.web2py_path,'site-packages')
 # if sys.path[0] != site_packages_path:
-#    sys.path.insert(0, site_packages_path)
+#     sys.path.insert(0, site_packages_path)
+# print site_packages_path
 
 from gluon.tools import *
 auth = Auth(globals(),db)
