@@ -52,6 +52,12 @@ def list_roadtrips():
     roadtrips=db(db.roadtrip.created_by==auth.user_id).select(orderby=db.roadtrip.title)
     return dict(roadtrips=roadtrips, test=test)
 
+def published_roadtrips():
+
+    roadtrips=db(db.roadtrip.published==1).select(orderby=db.roadtrip.title)
+    return dict(roadtrips=roadtrips)
+
+
 @auth.requires_login()
 def edit_roadtrip():
     id=request.args(0)
@@ -132,7 +138,6 @@ def view_story():
 
     return dict(story=story,json=json,results=results,teaser=teaser,link=link,pubDate=pubDate)
 
-@auth.requires_login()
 def view_roadtrip():
     stories = {}
     roadtrip_id=int(request.args(0))

@@ -23,6 +23,7 @@ db.define_table(
     'roadtrip', 
     Field('title'),
     Field('description', 'text'),
+    Field('published', 'boolean', default=False),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
     Field('created_on','datetime',default=request.now, writable=False, readable=False)
     )
