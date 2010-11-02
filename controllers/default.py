@@ -143,6 +143,16 @@ def view_roadtrip():
     roadtrip_id=int(request.args(0))
     roadtrip = db.roadtrip[roadtrip_id] or redirect(error_page)
     stories=db(db.story.roadtrip.contains(roadtrip_id)).select(orderby=db.story.title)
+    length=len(stories);
+    return dict(roadtrip=roadtrip, stories=stories, length=length)
+
+
+def roadtrip_markers():
+    response.headers['Content-Type']='text/xml'
+    stories = {}
+    roadtrip_id=int(request.args(0))
+    roadtrip = db.roadtrip[roadtrip_id] or redirect(error_page)
+    stories=db(db.story.roadtrip.contains(roadtrip_id)).select(orderby=db.story.title)
     return dict(roadtrip=roadtrip, stories=stories)
 
 @auth.requires_login()
