@@ -139,6 +139,7 @@
     // alert(map.getCenter().lng());
     document.story_form.story_latitude.value = map.getCenter().lat();
     document.story_form.story_longitude.value = map.getCenter().lng();
+    document.story_form.story_address.value = currentReverseGeocodeResponse[0].formatted_address;
   }
  
 </script> 

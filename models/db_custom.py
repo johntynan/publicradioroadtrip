@@ -35,6 +35,7 @@ db.define_table(
     Field('roadtrip','list:reference roadtrip'),
     Field('latitude'),
     Field('longitude'),
+    Field('address'),
     Field('comment', 'text'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
     Field('created_on','datetime', default=request.now, writable=False, readable=False)
