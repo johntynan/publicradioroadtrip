@@ -1,54 +1,14 @@
 // gets properties from page
 story_hostname = window.location.hostname
 story_url = window.location
-// story_id = window.location.search
 story_title = document.title
-
 story_title = escape(story_title);
+story_id = NPR.community.storyId
 
 // alert(story_hostname);
 // alert(story_url);
-// alert(story_id);
 // alert(story_title);
-
-QueryString.keys = new Array();
-QueryString.values = new Array();
-
-function QueryString(key){
-    var value = null;
-    for (var i = 0; i < QueryString.keys.length; i++) {
-        if (QueryString.keys[i] == key) {
-            value = QueryString.values[i];
-            break;
-        }
-    }
-    return value;
-}
-
-// Getting the NPR Article ID
-// From:
-// http://www.webmasterworld.com/forum91/907.htm
-// Call function by x = querystring("variable") returns variable=x
-QueryString.keys = new Array();
-QueryString.values = new Array();
-
-function QueryString_Parse(){
-    var query = window.location.search.substring(1);
-    var pairs = query.split("&");
-    
-    for (var i = 0; i < pairs.length; i++) {
-        var pos = pairs[i].indexOf('=');
-        if (pos >= 0) {
-            var argname = pairs[i].substring(0, pos);
-            var value = pairs[i].substring(pos + 1);
-            QueryString.keys[QueryString.keys.length] = argname;
-            QueryString.values[QueryString.values.length] = value;
-            // alert(QueryString.values[QueryString.values.length] = value)
-            story_id = QueryString.values[QueryString.values.length] = value
-        }
-    }
-}
-
+// alert(story_id);
 
 // A great place to start creating a bookmarklet:
 // Smashing Magazine
@@ -62,13 +22,17 @@ if (typeof jQuery == 'undefined') {
     document.body.appendChild(jQ);
     } else {
     if (story_hostname == 'www.npr.org') {
-        QueryString_Parse();
 	    runthis();
     }
     else {
         alert("This bookmarklet is intended to be used in conjunction with content on NPR.org");
     }
 }
+
+// use this url for testing locally:
+// localhost:8000
+// change out this url when updating on the production server:
+// publicradioroadtrip.appspot.com
 
 function runthis(){
     // alert(story_hostname);
