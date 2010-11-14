@@ -25,10 +25,11 @@
   var centerChangedLast;
   var reverseGeocodedLast;
   var currentReverseGeocodeResponse;
+    {{k =length}}
     var stories = [{{for story in stories:}}
-    ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, {{=length}}],{{pass}}
+    ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, '{{=story.comment}}', '{{=story.url}}',{{=k}}{{k = k - 1}}],{{pass}}
     ];
- 
+
   function initialize() {
     var latlng = new google.maps.LatLng(32.5468,-23.2031);
     var myOptions = {
@@ -51,7 +52,7 @@ function setMarkers(map, locations) {
         var marker = new google.maps.Marker({
             position: myLatLng,
             title: story[0],
-            zIndex: story[3]
+            zIndex: story[5]
         });
 
     marker.setMap(map);
@@ -61,7 +62,8 @@ function setMarkers(map, locations) {
     '</div>'+
     '<h4 id="firstHeading" class="firstHeading">' + story[0] + '</h4>'+
     '<div id="bodyContent">'+
-    '<p>' + '</p>'+
+    '<p>' + story[3] + '</p>'+
+    '<p><a href="' + story[4] + '" target ="_blank">View Story</a></p>'+
     '</div>'+
     '</div>';
 

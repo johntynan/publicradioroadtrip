@@ -32,6 +32,7 @@ db.define_table(
     'story', 
     Field('nprid'),
     Field('title'), 
+    Field('url'),
     Field('roadtrip','list:reference roadtrip'),
     Field('latitude'),
     Field('longitude'),

@@ -91,6 +91,9 @@ def add_story():
     if request.vars.title:
         form.vars.title = request.vars.title
 
+    if request.vars.url:
+        form.vars.url = request.vars.url
+
     if form.accepts(request.post_vars, session):
 
         response.flash='record inserted'
