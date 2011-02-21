@@ -8,6 +8,8 @@
 ## - call exposes all registered services (none by default)
 #########################################################################  
 
+import time, datetime, uuid, StringIO
+
 import logging
 from urllib2 import build_opener
 from urllib import quote_plus
@@ -284,9 +286,37 @@ def index():
     """
     response.flash = T('Welcome to web2py')
     return dict(message=T('Hello World'))
+
+@auth.requires_login()
+def list_topics():
+
+    topics=db(db.topic.created_by==auth.user_id).select(orderby=db.topic.title)
+    return dict(topics=topics)
+
+@auth.requires_login()
+def edit_topic():
+    id=request.args(0)
+    return dict(form=crud.update(db.topic,id))
+
+@auth.requires_login()
+def add_topic():
+
+    form = SQLFORM(db.topic)
+
+    if form.accepts(request.vars, session): 
+        response.flash='record inserted'
+
+        topic_id = dict(form.vars)['id']
+        topic = db(db.topic.id==topic_id).select()
+
+        redirect(URL(r=request, f='list_topics'))
+
+    elif form.errors: response.flash='form errors'
+    return dict(form=form)
+
     
 @auth.requires_login()
-def list_roadtrips():
+def list_collections():
 
     # just a test to see that the site-packages folder is in the sys.path
     # test = str(site_packages_path)
@@ -298,32 +328,32 @@ def list_roadtrips():
 
     test = ''
 
-    roadtrips=db(db.roadtrip.created_by==auth.user_id).select(orderby=db.roadtrip.title)
-    return dict(roadtrips=roadtrips, test=test)
+    collections=db(db.collection.created_by==auth.user_id).select(orderby=db.collection.title)
+    return dict(collections=collections, test=test)
 
-def published_roadtrips():
+def published_collections():
 
-    roadtrips=db(db.roadtrip.published==1).select(orderby=db.roadtrip.title)
-    return dict(roadtrips=roadtrips)
+    collections=db(db.collection.published==1).select(orderby=db.collection.title)
+    return dict(collections=collections)
 
 
 @auth.requires_login()
-def edit_roadtrip():
+def edit_collection():
     id=request.args(0)
-    return dict(form=crud.update(db.roadtrip,id))
+    return dict(form=crud.update(db.collection,id))
     
 @auth.requires_login()
-def add_roadtrip():
+def add_collection():
 
-    form = SQLFORM(db.roadtrip)
+    form = SQLFORM(db.collection)
 
     if form.accepts(request.vars, session): 
         response.flash='record inserted'
 
-        roadtrip_id = dict(form.vars)['id']
-        roadtrip = db(db.roadtrip.id==roadtrip_id).select()
+        collection_id = dict(form.vars)['id']
+        collection = db(db.collection.id==collection_id).select()
 
-        redirect(URL(r=request, f='list_roadtrips'))
+        redirect(URL(r=request, f='list_collections'))
 
     elif form.errors: response.flash='form errors'
     return dict(form=form)
@@ -390,22 +420,22 @@ def view_story():
 
     return dict(story=story,json=json,results=results,teaser=teaser,link=link,pubDate=pubDate)
 
-def view_roadtrip():
+def view_collection():
     stories = {}
-    roadtrip_id=int(request.args(0))
-    roadtrip = db.roadtrip[roadtrip_id] or redirect(error_page)
-    stories=db(db.story.roadtrip.contains(roadtrip_id)).select(orderby=db.story.title)
+    collection_id=int(request.args(0))
+    collection = db.collection[collection_id] or redirect(error_page)
+    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
     length=len(stories);
-    return dict(roadtrip=roadtrip, stories=stories, length=length)
+    return dict(collection=collection, stories=stories, length=length)
 
 
-def roadtrip_markers():
+def collection_markers():
     response.headers['Content-Type']='text/xml'
     stories = {}
-    roadtrip_id=int(request.args(0))
-    roadtrip = db.roadtrip[roadtrip_id] or redirect(error_page)
-    stories=db(db.story.roadtrip.contains(roadtrip_id)).select(orderby=db.story.title)
-    return dict(roadtrip=roadtrip, stories=stories)
+    collection_id=int(request.args(0))
+    collection = db.collection[collection_id] or redirect(error_page)
+    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
+    return dict(collection=collection, stories=stories)
 
 @auth.requires_login()
 def edit_story():

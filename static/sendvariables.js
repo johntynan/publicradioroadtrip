@@ -74,3 +74,4 @@ function runthis(){
         // setTimeout("$('#wikiframe').remove()", 750);
     });
 }
+

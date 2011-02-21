@@ -18,14 +18,16 @@ if auth.is_logged_in():
         ['Home', False, URL(request.application,'default','index')],
         ['My Stories', False, URL(request.application,'default','list_stories')],
         ['Add Story', False, URL(request.application,'default','add_story')],
-        ['My Roadtrips', False, URL(request.application,'default','list_roadtrips')],
-        ['Add Roadtrip', False, URL(request.application,'default','add_roadtrip')],
-        ['Published Roadtrips', False, URL(request.application,'default','published_roadtrips')],
+        ['My Topics', False, URL(request.application,'default','list_topics')],
+        ['Add Topic', False, URL(request.application,'default','add_topic')],
+        ['My Collections', False, URL(request.application,'default','list_collections')],
+        ['Add Collection', False, URL(request.application,'default','add_collection')],
+        ['Published Collections', False, URL(request.application,'default','published_collections')],
         ]
 else:
     response.menu = [
         ['Home', False, URL(request.application,'default','index')],
-        ['Published Roadtrips', False, URL(request.application,'default','published_roadtrips')],
+        ['Published Collections', False, URL(request.application,'default','published_collections')],
         ]
 '''
 response.menu = [
