@@ -25,7 +25,7 @@ COLLECTION_TYPES = ('Roadtrip','Walking Tour','Audio Guide','Mixtape')
 
 db.define_table(
     'collection', 
-    Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
+    # Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
     Field('title'),
     Field('type'),
     Field('description', 'text'),
@@ -38,17 +38,29 @@ db.collection.type.requires=IS_IN_SET(COLLECTION_TYPES)
 
 db.define_table(
     'topic', 
-    Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
+    # Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
     Field('title'),
     Field('description', 'text'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
     Field('created_on','datetime',default=request.now, writable=False, readable=False),
     Field('modified_on','datetime',default=request.now,writable=False,readable=False)
     )
+
+db.define_table(
+    'region', 
+    # Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
+    Field('title'),
+    Field('description', 'text'),
+    Field('area','text'),
+    Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
+    Field('created_on','datetime',default=request.now, writable=False, readable=False),
+    Field('modified_on','datetime',default=request.now,writable=False,readable=False)
+    )
+
                             
 db.define_table(
     'story', 
-    Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
+    # Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
     Field('nprid'),
     Field('title'), 
     Field('url'),
@@ -57,16 +69,18 @@ db.define_table(
     Field('latitude'),
     Field('longitude'),
     Field('address'),
-    Field('region','text'),
     Field('description','text'),
     Field('topic','list:reference topic'),
+    Field('region','list:reference region'),
     Field('image','upload'),
     Field('audio','upload'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
     Field('created_on','datetime', default=request.now, writable=False, readable=False),
     Field('modified_on','datetime',default=request.now,writable=False,readable=False)
     )
-    
+
 db.story.collection.requires=IS_IN_DB(db(db.collection.created_by==auth.user_id),'collection.id','%(title)s', multiple=True)
 db.story.topic.requires=IS_IN_DB(db(db.topic.created_by==auth.user_id),'topic.id','%(title)s', multiple=True) 
+db.story.region.requires=IS_IN_DB(db(db.region.created_by==auth.user_id),'region.id','%(title)s', multiple=True) 
 db.story.date.requires=IS_DATETIME('%Y-%m-%d %H:%M:%S')
+

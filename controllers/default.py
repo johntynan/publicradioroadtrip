@@ -288,6 +288,34 @@ def index():
     return dict(message=T('Hello World'))
 
 @auth.requires_login()
+def list_regions():
+
+    regions=db(db.region.created_by==auth.user_id).select(orderby=db.region.title)
+    return dict(regions=regions)
+
+@auth.requires_login()
+def edit_region():
+    id=request.args(0)
+    return dict(form=crud.update(db.region,id))
+
+@auth.requires_login()
+def add_region():
+
+    form = SQLFORM(db.region)
+
+    if form.accepts(request.vars, session): 
+        response.flash='record inserted'
+
+        region_id = dict(form.vars)['id']
+        region = db(db.region.id==region_id).select()
+
+        redirect(URL(r=request, f='list_regions'))
+
+    elif form.errors: response.flash='form errors'
+    return dict(form=form)
+
+
+@auth.requires_login()
 def list_topics():
 
     topics=db(db.topic.created_by==auth.user_id).select(orderby=db.topic.title)
