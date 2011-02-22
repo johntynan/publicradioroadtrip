@@ -30,10 +30,10 @@
     ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, '{{=story.description}}', '{{=story.url}}',{{=k}}{{k = k - 1}}],{{pass}}
     ];
 
-  function initialize() {
-    var latlng = new google.maps.LatLng(32.5468,-23.2031);
+  function initialize(){
+    var latlng = new google.maps.LatLng({{=stories[0].latitude}},{{=stories[0].longitude}});
     var myOptions = {
-      zoom: 2,
+      zoom: 14,
       center: latlng,
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
@@ -52,7 +52,7 @@ function setMarkers(map, locations) {
         var marker = new google.maps.Marker({
             position: myLatLng,
             title: story[0],
-            zIndex: story[5]
+            zIndex: i
         });
 
     marker.setMap(map);

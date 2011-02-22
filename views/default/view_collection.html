@@ -16,7 +16,12 @@
 
 <h3>{{=story.title}}</h3>
 
+
+{{if story.nprid == '':}}
+
+    {{else:}}
 <script type="text/javascript" src="http://api.npr.org/query?&searchTerm={{=story.nprid}}&dateType=story&output=JS&apiKey=MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004"></script>
+{{pass}}
 
 <h3>Description</h3>
 <div>
