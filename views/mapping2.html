@@ -43,19 +43,28 @@
     // setupEvents();
     // centerChanged();
     setMarkers(map, stories);
+
   }
 
-function setMarkers(map, locations) {
-    for (var i = 0; i < locations.length; i++) {
-        var story = locations[i];
+function bindInfoWindow(marker, contentString, infowindow)
+{
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.setContent(contentString);
+            infowindow.open(map, marker);
+        });
+}
+
+function setMarkers(map, stories) {
+
+    // alert(stories.length);
+    for (var i = 0; i < stories.length; i++) {
+        var story = stories[i];
         var myLatLng = new google.maps.LatLng(story[1], story[2]);
         var marker = new google.maps.Marker({
             position: myLatLng,
             title: story[0],
             zIndex: i
         });
-
-    marker.setMap(map);
 
     var contentString = '<div id="content">'+
     '<div id="siteNotice">'+
@@ -67,13 +76,11 @@ function setMarkers(map, locations) {
     '</div>'+
     '</div>';
 
-    var infowindow = new google.maps.InfoWindow({
-        content: contentString
-    });
- 
-    google.maps.event.addListener(marker, 'click', function() {
-        infowindow.open(map,marker);
-        });
+    infowindow = new google.maps.InfoWindow();
+
+    bindInfoWindow(marker, contentString, infowindow);
+
+    marker.setMap(map);
 
     }
 
