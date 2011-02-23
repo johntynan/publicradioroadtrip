@@ -456,6 +456,24 @@ def view_collection():
     length=len(stories);
     return dict(collection=collection, stories=stories, length=length)
 
+def view_collection_feed():
+    stories = {}
+    collection_id=int(request.args(0))
+    collection = db.collection[collection_id] or redirect(error_page)
+    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
+    length=len(stories);
+    scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
+    return dict(title=collection.title,
+                link = scheme + '://' + request.env.http_host + request.env.path_info,
+                description = collection.description,
+                created_on = request.now,
+                entries = [
+                  dict(title = story.title,
+                  link = story.url,
+                  description = story.description,
+                  created_on = request.now) for story in stories])
+
+    # return dict(collection=collection, stories=stories, length=length)
 
 def collection_markers():
     response.headers['Content-Type']='text/xml'

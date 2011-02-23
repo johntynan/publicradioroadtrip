@@ -25,6 +25,7 @@
   var centerChangedLast;
   var reverseGeocodedLast;
   var currentReverseGeocodeResponse;
+
     {{k =length}}
     var stories = [{{for story in stories:}}
     ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, '{{=story.description}}', '{{=story.url}}',{{=k}}{{k = k - 1}}],{{pass}}
