@@ -33,9 +33,16 @@
 
   function initialize(){
     var latlng = new google.maps.LatLng({{=stories[0].latitude}},{{=stories[0].longitude}});
+
     var myOptions = {
       zoom: 14,
       center: latlng,
+      panControl: true,
+      zoomControl: true,
+      mapTypeControl: true,
+      scaleControl: true,
+      streetViewControl: true,
+      travelMode: google.maps.DirectionsTravelMode.DRIVING
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
