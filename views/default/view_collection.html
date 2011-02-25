@@ -22,6 +22,12 @@
 
     {{else:}}
 <script type="text/javascript" src="http://api.npr.org/query?&searchTerm={{=story.nprid}}&dateType=story&output=JS&apiKey=MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004"></script>
+
+<h3>NPR ID</h3>
+<div>
+{{=story.nprid}}</small>
+</div>
+
 {{pass}}
 
 <h3>Description</h3>
@@ -36,11 +42,6 @@
 {{=story.address}}<br />
 </div>
 
-
-<h3>NPR ID</h3>
-<div>
-{{=story.nprid}}</small>
-</div>
 
 {{pass}}
 

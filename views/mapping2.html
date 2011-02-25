@@ -28,7 +28,7 @@
 
     {{k =length}}
     var stories = [{{for story in stories:}}
-    ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, '{{=story.description}}', '{{=story.url}}',{{=k}}{{k = k - 1}}],{{pass}}
+    ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, '{{=story.description}}', '{{=story.url}}','{{=story.date}}','{{=story.image}}','{{=story.audio}}'],{{pass}}
     ];
 
   function initialize(){
@@ -65,6 +65,7 @@ function setMarkers(map, stories) {
 
     // alert(stories.length);
     for (var i = 0; i < stories.length; i++) {
+        // alert(story);
         var story = stories[i];
         var myLatLng = new google.maps.LatLng(story[1], story[2]);
         var marker = new google.maps.Marker({
@@ -74,11 +75,13 @@ function setMarkers(map, stories) {
         });
 
     var contentString = '<div id="content">'+
-    '<div id="siteNotice">'+
-    '</div>'+
     '<h4 id="firstHeading" class="firstHeading">' + story[0] + '</h4>'+
     '<div id="bodyContent">'+
-    '<p>' + story[3] + '</p>'+
+    '<p>'+
+    '<img src="../download/' + story[6] + '" style="float:left;">'+
+    story[3] + '<br />' +
+    '</p>'+
+    '<p><embed src="../download/' + story[7] + '" type="audio" height="28" /></p>'+
     '<p><a href="' + story[4] + '" target ="_blank">View Story</a></p>'+
     '</div>'+
     '</div>';
