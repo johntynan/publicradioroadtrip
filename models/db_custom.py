@@ -73,7 +73,9 @@ db.define_table(
     Field('topic','list:reference topic'),
     Field('region','list:reference region'),
     Field('image','upload'),
+    Field('image_url'),
     Field('audio','upload'),
+    Field('audio_url'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
     Field('created_on','datetime', default=request.now, writable=False, readable=False),
     Field('modified_on','datetime',default=request.now,writable=False,readable=False)

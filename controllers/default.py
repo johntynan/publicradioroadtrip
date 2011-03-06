@@ -450,11 +450,13 @@ def view_story():
 
 def view_collection():
     stories = {}
+    regions = {}
     collection_id=int(request.args(0))
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
+    regions=db(db.story.region.contains(collection_id)).select(orderby=db.story.title)
     length=len(stories);
-    return dict(collection=collection, stories=stories, length=length)
+    return dict(collection=collection, stories=stories, length=length, regions=regions)
 
 def view_collection_feed():
     stories = {}
