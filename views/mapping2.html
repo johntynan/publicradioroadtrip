@@ -27,12 +27,12 @@
   var currentReverseGeocodeResponse;
 
     {{k =length}}
-    var stories = [{{for story in stories:}}
-    ['{{=story.title}}', {{=story.latitude}}, {{=story.longitude}}, '{{=story.description}}', '{{=story.url}}','{{=story.date}}','{{=story.image}}','{{=story.audio}}','{{=story.image_url}}','{{=story.audio_url}}'],{{pass}}
+    var stories = [{{for story in story_list:}}
+    ['{{=story['title']}}', {{=story['latitude']}}, {{=story['longitude']}}, '{{=story['description']}}', '{{=story['url']}}','{{=story['date']}}','{{=story['image_url']}}','{{=story['audio_url']}}'],{{pass}}
     ];
 
   function initialize(){
-    var latlng = new google.maps.LatLng({{=stories[0].latitude}},{{=stories[0].longitude}});
+    var latlng = new google.maps.LatLng({{=story_list[0]['latitude']}},{{=story_list[0]['longitude']}});
 
     var myOptions = {
       zoom: 14,
@@ -77,11 +77,9 @@ function setMarkers(map, stories) {
     var contentString = '<div id="content">'+
     '<h4 id="firstHeading" class="firstHeading">' + story[0] + '</h4>'+
     '<div id="bodyContent">'+
-    '<p><img src="../download/' + story[6] + '"></p>'+
-    '<p><img src="' + story[8] + '"></p>'+
+    '<p><img src="' + story[6] + '"></p>'+
     '<p>' + story[3] + '</p>' +
-    '<p><embed src="../download/' + story[7] + '" type="audio" height="28" /></p>'+
-    '<p><embed src="' + story[9] + '" type="audio" height="28" /></p>'+
+    '<p><embed src="' + story[7] + '" type="audio" height="28" /></p>'+
     '<p><a href="' + story[4] + '" target ="_blank">View Story</a></p>'+
     '</div>'+
     '</div>';

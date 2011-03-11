@@ -417,16 +417,36 @@ def add_story():
 def list_stories():
     stories=db(db.story.created_by==auth.user_id).select(orderby=db.story.title)
     return dict(stories=stories)
-    
+
 @auth.requires_login()
 def view_story():
     id=request.args(0)
     story=db.story[id] or redirect(error_page)
 
-    # note: gutting kcrw.nprapi module from this part of the code.  At least until I am able to get Google App Engine to find the module from the appropriate site-packages directory.
+    stories = {}
+
+    stories = story
+    regions=story.region
+    topics=story.topic
+    length=len(stories)
+
+    story_list = []
+
+    if story.nprid != '':
+        npr_story = format_npr_story(story.nprid, story.id)
+        story_list.append(npr_story)
+        print story_list
+    else:
+        x = format_local_story(story.id)
+        story_list.append(x)
+
+    return dict(collection=story.collection, story=story, stories=stories, length=length, regions=regions, topics=topics, story_list=story_list)
+
+def format_npr_story(nprid, story_id):
+    story=db.story[story_id]
 
     # get the story from the npr api as a json string
-    json = api.query(story.nprid)
+    json = api.query(nprid)
 
     # turn the json string into a dictionary
     # json = 'Some sample text.'
@@ -434,29 +454,121 @@ def view_story():
     results = json
     results = simplejson.loads(results)
 
-    # get the teaser for the story
-    # teaser = 'Some sample text.'
-    teaser = results['list']['story'][0]['teaser'].values()[0]
+    # get title
+    if story.title == '':
+        title = results['list']['story'][0]['title'].values()[0]
+    else:
+        title = story.title
 
-    # get the teaser for the story
-    # link = 'http://www.npr.com'
-    link = results['list']['story'][0]['link'][2].values()[0]
+    # get description
+    if story.description == '':
+        description = results['list']['story'][0]['teaser'].values()[0]
+    else:
+        description = story.description
 
-    # get the pubdDate for the story
-    # pubDate = 'Sat, 09 Oct 2010 14:05:00 -0400'
-    pubDate = results['list']['story'][0]['pubDate'].values()[0]
+    # get url
+    if story.url == '':
+        url = results['list']['story'][0]['link'][2].values()[0]
+    else:
+        url = story.url
 
-    return dict(story=story,json=json,results=results,teaser=teaser,link=link,pubDate=pubDate)
+    # get date
+    if story.date == '':
+        date = results['list']['story'][0]['pubDate'].values()[0]
+    else:
+        date = story.date
+
+    # get image
+    if story.image_url == '':
+        image_url = results['list']['story'][0]['title'].values()[0]
+    else:
+        image_url = story.image_url
+
+    # get audio
+    if story.audio_url == '':
+        audio_url = results['list']['story'][0]['title'].values()[0]
+    else:
+        audio_url = story.audio_url
+
+    # get topic
+    topics=story.topic
+
+    # get region
+    regions=story.region
+
+    # get latitude
+    latitude=story.latitude
+
+    # get longitude
+    longitude=story.longitude
+
+    # get address
+    address=story.address
+
+    return dict(title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+
+
+def format_local_story(story_id):
+    story=db.story[story_id]
+
+    title = story.title
+    description = story.description
+    url = story.url
+    date = story.date
+
+    # get image
+    if story.image != '':
+        image_url = '../download/' + story.image
+    else:
+        image_url = story.image_url
+
+    # get audio
+    if story.audio != '':
+        audio_url = '../download/' + story.audio
+    else:
+        audio_url = story.audio_url
+
+
+    # get topic
+    topics=story.topic
+
+    # get region
+    regions=story.region
+
+    # get latitude
+    latitude=story.latitude
+
+    # get longitude
+    longitude=story.longitude
+
+    # get address
+    address=story.address
+
+    return dict(title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+
 
 def view_collection():
     stories = {}
-    regions = {}
     collection_id=int(request.args(0))
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
     regions=db(db.story.region.contains(collection_id)).select(orderby=db.story.title)
-    length=len(stories);
-    return dict(collection=collection, stories=stories, length=length, regions=regions)
+    topics=db(db.story.topic.contains(collection_id)).select(orderby=db.story.title)
+    length=len(stories)
+
+    story_list = []
+
+
+    for story in stories:
+        if story.nprid != '':
+            npr_story = format_npr_story(story.nprid, story.id)
+            story_list.append(npr_story)
+            print story_list
+        else:
+            x = format_local_story(story.id)
+            story_list.append(x)
+
+    return dict(collection=collection, stories=stories, length=length, regions=regions, topics=topics, story_list=story_list)
 
 def view_collection_feed():
     stories = {}

@@ -9,37 +9,22 @@
 
 <h3><a href="../view_collection_feed.rss/{{=collection.id}}">Podcast</a>
 
-{{for story in stories:}}
-
-<!-- iframe src="http://api.npr.org/query?&searchTerm={{=story.nprid}}&dateType=story&output=html&apiKey=MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004" width="100%" height="150"> 
-</iframe -->
+{{for story in story_list:}}
 
 
-<h3>{{=story.title}}</h3>
-
-
-{{if story.nprid == '':}}
-
-    {{else:}}
-<script type="text/javascript" src="http://api.npr.org/query?&searchTerm={{=story.nprid}}&dateType=story&output=JS&apiKey=MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004"></script>
-
-<h3>NPR ID</h3>
-<div>
-{{=story.nprid}}</small>
-</div>
-
-{{pass}}
+<h3>{{=story['title']}}</h3>
 
 <h3>Description</h3>
 <div>
-{{=story.description}}
+{{=story['description']}}
 </div>
 
 <h3>Mapping Information</h3>
 <div>
-{{=story.latitude}}<br />
-{{=story.longitude}}<br />
-{{=story.address}}<br />
+
+{{=story['latitude']}}<br />
+{{=story['longitude']}}<br />
+{{=story['address']}}<br />
 </div>
 
 
