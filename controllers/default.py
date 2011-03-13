@@ -453,6 +453,7 @@ def format_npr_story(nprid, story_id):
     # results = 'Some sample text.'
     results = json
     results = simplejson.loads(results)
+    print results
 
     # get title
     if story.title == '':
@@ -480,13 +481,13 @@ def format_npr_story(nprid, story_id):
 
     # get image
     if story.image_url == '':
-        image_url = results['list']['story'][0]['image'].values()[0]
+        image_url = results['list']['story'][0]['title'].values()[0]
     else:
         image_url = story.image_url
 
-    # get audio
+    # get image
     if story.audio_url == '':
-        audio_url = results['list']['story'][0]['audio'].values()[0]
+        audio_url = results['list']['story'][0]['title'].values()[0]
     else:
         audio_url = story.audio_url
 
