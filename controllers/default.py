@@ -10,9 +10,6 @@
 
 import time, datetime, uuid, StringIO
 
-# for testing
-# from pprint import pprint
-
 import logging
 from urllib2 import build_opener
 from urllib import quote_plus
@@ -457,7 +454,6 @@ def format_npr_story(nprid, story_id):
     results = json
     results = simplejson.loads(results)
     # print results
-    # pprint(results)
 
     # get title
     if story.title == '':
@@ -495,7 +491,7 @@ def format_npr_story(nprid, story_id):
     else:
         audio_url = story.audio_url
 
-    # pprint(image_url)
+    print(image_url)
 
     # get topic
     topics=story.topic
