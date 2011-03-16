@@ -462,7 +462,12 @@ def format_npr_story(nprid, story_id):
     description = results['list']['story'][0]['teaser'].values()[0]
 
     # get url
-    url = results['list']['story'][0]['link'][2].values()[0]
+    try:
+        results['list']['story'][0]['link'][2].values()[0]
+    except IndexError:
+        url = 'http://npr.org'
+    else:
+        url = results['list']['story'][0]['link'][2].values()[0]
 
     # get date
     date = results['list']['story'][0]['pubDate'].values()[0]
