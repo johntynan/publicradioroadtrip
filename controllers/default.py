@@ -468,12 +468,22 @@ def format_npr_story(nprid, story_id):
     date = results['list']['story'][0]['pubDate'].values()[0]
 
     # get image
-    image_url = results['list']['story'][0]['image'][0]['src']
+    try:
+        results['list']['story'][0]['image'][0]['src']
+    except KeyError:
+        image_url = ''
+    else:
+        image_url = results['list']['story'][0]['image'][0]['src']
 
     # get image
-    audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+    try:
+        results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+    except KeyError:
+        audio_url = ''
+    else:
+        audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
 
-    print(image_url)
+    # print(image_url)
 
     # get topic
     topics=story.topic
