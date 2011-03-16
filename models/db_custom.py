@@ -64,7 +64,7 @@ db.define_table(
     Field('nprid'),
     Field('title'), 
     Field('url'),
-    Field('date','datetime'),
+    Field('date','datetime',default=request.now),
     Field('collection','list:reference collection'),
     Field('latitude'),
     Field('longitude'),

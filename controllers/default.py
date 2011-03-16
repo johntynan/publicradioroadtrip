@@ -456,40 +456,22 @@ def format_npr_story(nprid, story_id):
     # print results
 
     # get title
-    if story.title == '':
-        title = results['list']['story'][0]['title'].values()[0]
-    else:
-        title = story.title
+    title = results['list']['story'][0]['title'].values()[0]
 
     # get description
-    if story.description == '':
-        description = results['list']['story'][0]['teaser'].values()[0]
-    else:
-        description = story.description
+    description = results['list']['story'][0]['teaser'].values()[0]
 
     # get url
-    if story.url == '':
-        url = results['list']['story'][0]['link'][2].values()[0]
-    else:
-        url = story.url
+    url = results['list']['story'][0]['link'][2].values()[0]
 
     # get date
-    if story.date == '':
-        date = results['list']['story'][0]['pubDate'].values()[0]
-    else:
-        date = story.date
+    date = results['list']['story'][0]['pubDate'].values()[0]
 
     # get image
-    if story.image_url == '':
-        image_url = results['list']['story'][0]['image'][0]['src']
-    else:
-        image_url = story.image_url
+    image_url = results['list']['story'][0]['image'][0]['src']
 
     # get image
-    if story.audio_url == '':
-        audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
-    else:
-        audio_url = story.audio_url
+    audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
 
     print(image_url)
 
