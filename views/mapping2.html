@@ -79,7 +79,7 @@ function setMarkers(map, stories) {
     '<div id="bodyContent">'+
     '<p><img src="' + story[6] + '"></p>'+
     '<p>' + story[3] + '</p>' +
-    '<p><embed src="' + story[7] + '" type="audio" height="28" /></p>'+
+    '<p><object width="400" height="40"> <param name="movie" value="http://fpdownload.adobe.com/strobe/FlashMediaPlayback.swf"></param><param name="flashvars" value="src=' + story[7] + '&playButtonOverlay=false&autoPlay=true"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="http://fpdownload.adobe.com/strobe/FlashMediaPlayback.swf" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="400" height="40" flashvars="src=' + story[7] + '&playButtonOverlay=false&autoPlay=true"></embed></object></p>'+
     '<p><a href="' + story[4] + '" target ="_blank">View Story</a></p>'+
     '</div>'+
     '</div>';
