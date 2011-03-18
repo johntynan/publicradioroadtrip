@@ -301,7 +301,7 @@ def edit_region():
 @auth.requires_login()
 def add_region():
 
-    form = SQLFORM(db.region)
+    form = SQLFORM(db.region, _name='region_form')
 
     if form.accepts(request.vars, session): 
         response.flash='record inserted'

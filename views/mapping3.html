@@ -1,0 +1,50 @@
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="/publicradioroadtrip/static/polygon/polygon.js"></script>
+
+<script type="text/javascript"> 
+$(function(){
+	  //create map
+	 var latlng = new google.maps.LatLng(32.5468,-23.2031);
+	 var myOptions = {
+	  	zoom: 2,
+	  	center: latlng,
+	  	mapTypeId: google.maps.MapTypeId.ROADMAP
+	  }
+	 map = new google.maps.Map(document.getElementById('main-map'), myOptions);
+	 
+	 var creator = new PolygonCreator(map);
+	 
+	 //reset
+	 $('#reset').click(function(){ 
+	 		creator.destroy();
+	 		creator=null;
+	 		
+	 		creator=new PolygonCreator(map);
+	 });		 
+	 
+	 
+	 //show paths
+	 $('#showData').click(function(){ 
+	 		$('#dataPanel').empty();
+	 		if(null==creator.showData()){
+	 			$('#dataPanel').append('Please first create a polygon');
+	 		}else{
+	 			$('#dataPanel').append(creator.showData());
+	 		}
+	 });
+	 
+	 //show color
+	 $('#showColor').click(function(){ 
+	 		$('#dataPanel').empty();
+	 		if(null==creator.showData()){
+	 			$('#dataPanel').append('Please first create a polygon');
+	 		}else{
+	 				$('#dataPanel').append(creator.showColor());
+	 		}
+	 });
+});	
+</script> 
+
+</head> 
+
+
