@@ -9,6 +9,7 @@
 #########################################################################  
 
 import time, datetime, uuid, StringIO
+from sets import Set
 
 import logging
 from urllib2 import build_opener
@@ -552,12 +553,11 @@ def view_collection():
     collection_id=int(request.args(0))
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
-    regions=db(db.story.region.contains(collection_id)).select(orderby=db.story.title)
     topics=db(db.story.topic.contains(collection_id)).select(orderby=db.story.title)
     length=len(stories)
 
     story_list = []
-
+    region_list = []
 
     for story in stories:
         if story.nprid != '':
@@ -568,7 +568,13 @@ def view_collection():
             x = format_local_story(story.id)
             story_list.append(x)
 
-    return dict(collection=collection, stories=stories, length=length, regions=regions, topics=topics, story_list=story_list)
+    for story in stories:
+        x = int(story.region[0])
+        y = db.region[x]
+        if y not in region_list:
+            region_list.append(y)
+
+    return dict(collection=collection, stories=stories, length=length, region_list=region_list, topics=topics, story_list=story_list)
 
 def view_collection_feed():
     stories = {}
