@@ -1,0 +1,16 @@
+{{response.files.append(URL(r=request,c='static',f='jquery.dataTables.min.js'))}}
+{{response.files.append(URL(r=request,c='static',f='demo_table.css'))}}
+{{extend 'layout.html'}}
+
+<table id="published_collections">
+<th>collection</th>
+<th>Name</th>
+<th>Description</th>
+{{for collection in collections:}}
+<tr>
+    <td><a href="{{=URL(r=request,f='view_collection',args=collection.id)}}">{{=collection.title}}</a></td>
+    <td>{{=collection.description}}</td>
+</tr>
+{{pass}}
+</table>
+
