@@ -31,5 +31,17 @@ To add the bookmarklet to your browser, just drag this "
 
 <h3>Story Information</h3>
 
+{{if request.vars.nprid:}}
 {{=form}}
-
+<script type="text/javascript">
+document.getElementById("story_image__row").style.display = 'none';
+document.getElementById("story_image_url__row").style.display = 'none';
+document.getElementById("story_audio__row").style.display = 'none';
+document.getElementById("story_audio_url__row").style.display = 'none';
+</script>
+{{else:}}
+{{=form}}
+<script type="text/javascript">
+document.getElementById("story_nprid__row").style.display = 'none';
+</script>
+{{pass}}
