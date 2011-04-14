@@ -8,6 +8,8 @@
 ## - call exposes all registered services (none by default)
 #########################################################################  
 
+from gluon.serializers import rss   
+
 import time, datetime, uuid, StringIO
 from sets import Set
 
@@ -391,7 +393,7 @@ def add_collection():
 def add_story():
 
 
-    form = SQLFORM(db.story, _name='story_form')
+    form = SQLFORM(db.story, _name='story_form', hidden_fields=['title'])
 
     if request.vars.nprid:
         form.vars.nprid = request.vars.nprid
@@ -570,37 +572,49 @@ def view_collection():
             story_list.append(x)
 
     for story in stories:
-        x = int(story.region[0])
-        y = db.region[x]
-        if y not in region_list:
-            region_list.append(y)
+        if story.region != '':
+            x = int(story.region[0])
+            y = db.region[x]
+            if y not in region_list:
+                region_list.append(y)
 
     for story in stories:
-        x = int(story.topic[0])
-        y = db.topic[x]
-        if y not in topic_list:
-            topic_list.append(y)
+        if story.topic != '':
+            x = int(story.topic[0])
+            y = db.topic[x]
+            if y not in topic_list:
+                topic_list.append(y)
 
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list)
 
 def view_collection_feed():
     stories = {}
-    collection_id=int(request.args(0))
+    collection_id=request.args(0)
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
     length=len(stories);
     scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
+
+    entries = []
+
+    for story in stories:
+
+        x = {}
+        title = story.title
+        link = story.url
+        enclosure = story.audio_url
+        description = story.description
+        comments = 'test'
+        created_on = request.now
+        x.update(title=title, link=link, enclosure=enclosure, description=description, comments=comments, created_on=created_on)
+        entries.append(x)
+
     return dict(title=collection.title,
                 link = scheme + '://' + request.env.http_host + request.env.path_info,
                 description = collection.description,
                 created_on = request.now,
-                entries = [
-                  dict(title = story.title,
-                  link = story.url,
-                  description = story.description,
-                  created_on = request.now) for story in stories])
+                entries = entries)
 
-    # return dict(collection=collection, stories=stories, length=length)
 
 def collection_markers():
     response.headers['Content-Type']='text/xml'
