@@ -8,7 +8,7 @@
 ## - call exposes all registered services (none by default)
 #########################################################################  
 
-from gluon.serializers import rss   
+import gluon.contrib.rss2 as rss2
 
 import time, datetime, uuid, StringIO
 from sets import Set
@@ -600,21 +600,31 @@ def view_collection_feed():
     for story in stories:
 
         x = {}
+        enclosure = {'url': story.audio_url, 'length': '0', 'type': 'mp3'}
         title = story.title
         link = story.url
-        enclosure = story.audio_url
+        # enclosure = story.audio_url
         description = story.description
         comments = 'test'
         created_on = request.now
         x.update(title=title, link=link, enclosure=enclosure, description=description, comments=comments, created_on=created_on)
         entries.append(x)
+        print x
 
-    return dict(title=collection.title,
-                link = scheme + '://' + request.env.http_host + request.env.path_info,
-                description = collection.description,
-                created_on = request.now,
-                entries = entries)
+    rss = rss2.RSS2(title=collection.title,
+        link = scheme + '://' + request.env.http_host + request.env.path_info,
+        description = collection.description,
+        lastBuildDate = request.now,
+        items = [
+            rss2.RSSItem(title = entry['title'],
+                link = entry['link'],
+                description = entry['description'],
+                comments = entry['comments'],
+                # enclosure = entry['enclosure'],
+                pubDate = request.now) for entry in entries])
 
+    response.headers['Content-Type']='application/rss+xml'
+    return rss2.dumps(rss)
 
 def collection_markers():
     response.headers['Content-Type']='text/xml'
