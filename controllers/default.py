@@ -588,6 +588,11 @@ def view_collection():
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list)
 
 def view_collection_feed():
+    """ 
+    Creates an rss feed.  Creates items (based on stories) for this feed.  Items have audio enclosures.
+
+    """
+
     stories = {}
     collection_id=request.args(0)
     collection = db.collection[collection_id] or redirect(error_page)
@@ -600,7 +605,7 @@ def view_collection_feed():
     for story in stories:
 
         x = {}
-        enclosure = {'url': story.audio_url, 'length': '0', 'type': 'mp3'}
+        enclosure = {'url': story.audio_url, 'length': '0', 'type': 'audio/mpeg'}
         title = story.title
         link = story.url
         # enclosure = story.audio_url
@@ -609,7 +614,6 @@ def view_collection_feed():
         created_on = request.now
         x.update(title=title, link=link, enclosure=enclosure, description=description, comments=comments, created_on=created_on)
         entries.append(x)
-        print x
 
     rss = rss2.RSS2(title=collection.title,
         link = scheme + '://' + request.env.http_host + request.env.path_info,
