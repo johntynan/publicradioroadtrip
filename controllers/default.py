@@ -13,6 +13,12 @@ import gluon.contrib.rss2 as rss2
 import time, datetime, uuid, StringIO
 from sets import Set
 
+
+# from here to roughly line 285, I am including KCRW’s python NPR API library, at least until I am able to properly import this from the site-packages directory. 
+# The KCRW’s python NPR API library was created by Alec Mitchell for KCRW, an NPR station based in Santa Monica, California.
+# kcrw.nprapi is copyright 2010 KCRW
+# for additional information, see: http://packages.python.org/kcrw.nprapi/
+
 import logging
 from urllib2 import build_opener
 from urllib import quote_plus
