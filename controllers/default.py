@@ -595,7 +595,7 @@ def view_collection():
 
 def view_collection_feed():
     """ 
-    Creates an rss feed.  Creates items (based on stories) for this feed.  Items have audio enclosures.
+    Creates an rss feed.  Creates items (based on stories) for this feed.  Items have audio enclosures (will these always be mp3?).
 
     """
 
@@ -606,32 +606,17 @@ def view_collection_feed():
     length=len(stories);
     scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
 
-    entries = []
-
-    for story in stories:
-
-        x = {}
-        enclosure = {'url': story.audio_url, 'length': '0', 'type': 'audio/mpeg'}
-        title = story.title
-        link = story.url
-        # enclosure = story.audio_url
-        description = story.description
-        comments = 'test'
-        created_on = request.now
-        x.update(title=title, link=link, enclosure=enclosure, description=description, comments=comments, created_on=created_on)
-        entries.append(x)
-
     rss = rss2.RSS2(title=collection.title,
         link = scheme + '://' + request.env.http_host + request.env.path_info,
         description = collection.description,
-        lastBuildDate = request.now,
+        lastBuildDate = collection.modified_on,
         items = [
-            rss2.RSSItem(title = entry['title'],
-                link = entry['link'],
-                description = entry['description'],
-                comments = entry['comments'],
-                # enclosure = entry['enclosure'],
-                pubDate = request.now) for entry in entries])
+            rss2.RSSItem(title = story.title,
+            link = story.url,
+            enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
+            description = story.description,
+            # comments = 'test',
+            pubDate = story.date) for story in stories])
 
     response.headers['Content-Type']='application/rss+xml'
     return rss2.dumps(rss)
