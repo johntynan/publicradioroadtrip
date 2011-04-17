@@ -51,6 +51,21 @@
     // centerChanged();
     setMarkers(map, stories);
 
+    var storyPathCoordinates = [{{for story in story_list:}}
+        new google.maps.LatLng('{{=story['latitude']}}', '{{=story['longitude']}}'),{{pass}}
+        ];
+
+        // alert(storyPathCoordinates);
+
+    var storyPath = new google.maps.Polyline({
+        path: storyPathCoordinates,
+        strokeColor: "#6666FF",
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+        });
+
+    storyPath.setMap(map);
+
   }
 
 function bindInfoWindow(marker, contentString, infowindow)

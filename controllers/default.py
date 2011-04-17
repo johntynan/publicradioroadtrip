@@ -577,6 +577,8 @@ def view_collection():
             x = format_local_story(story.id)
             story_list.append(x)
 
+    # this needs to be fixed:
+    """
     for story in stories:
         if story.region != '':
             x = int(story.region[0])
@@ -590,6 +592,7 @@ def view_collection():
             y = db.topic[x]
             if y not in topic_list:
                 topic_list.append(y)
+    """
 
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list)
 
