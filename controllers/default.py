@@ -437,6 +437,7 @@ def view_story():
     stories = story
     regions=story.region
     topics=story.topic
+    sort_value=story.sort_value
     length=len(stories)
 
     story_list = []
@@ -558,9 +559,11 @@ def format_local_story(story_id):
 
 def view_collection():
     stories = {}
+    stories_by_sort_value = {}
     collection_id=int(request.args(0))
     collection = db.collection[collection_id] or redirect(error_page)
-    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
+    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.date)
+    stories_by_sort_value=db(db.story.collection.contains(collection_id)).select(orderby=db.story.sort_value)
     topics=db(db.story.topic.contains(collection_id)).select(orderby=db.story.title)
     length=len(stories)
 
@@ -568,15 +571,34 @@ def view_collection():
     region_list = []
     topic_list = []
 
-    for story in stories:
-        if story.nprid != '':
-            npr_story = format_npr_story(story.nprid, story.id)
-            story_list.append(npr_story)
-            print story_list
-        else:
-            x = format_local_story(story.id)
-            story_list.append(x)
-
+    if collection.sort_type == 'Date':
+        for story in stories:
+            if story.nprid != '':
+                npr_story = format_npr_story(story.nprid, story.id)
+                story_list.append(npr_story)
+                # print story_list
+            else:
+                x = format_local_story(story.id)
+                story_list.append(x)
+    elif collection.sort_type == 'Sort Values':
+        for story in stories_by_sort_value:
+            if story.nprid != '':
+                npr_story = format_npr_story(story.nprid, story.id)
+                story_list.append(npr_story)
+                # print story_list
+            else:
+                x = format_local_story(story.id)
+                story_list.append(x)
+    else: 
+        for story in stories:
+            if story.nprid != '':
+                npr_story = format_npr_story(story.nprid, story.id)
+                story_list.append(npr_story)
+                # print story_list
+            else:
+                x = format_local_story(story.id)
+                story_list.append(x)
+    
     # this needs to be fixed:
     """
     for story in stories:

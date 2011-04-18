@@ -22,12 +22,14 @@ else:
     user_id = None
 
 COLLECTION_TYPES = ('Roadtrip','Walking Tour','Audio Guide','Mixtape')
+SORT_TYPES = ('None','Date','Sort Values')
 
 db.define_table(
     'collection', 
     # Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
     Field('title'),
     Field('type'),
+    Field('sort_type'),    
     Field('description', 'text'),
     Field('published', 'boolean', default=False),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
@@ -35,6 +37,7 @@ db.define_table(
     Field('modified_on','datetime',default=request.now,writable=False,readable=False)
     )
 db.collection.type.requires=IS_IN_SET(COLLECTION_TYPES)
+db.collection.sort_type.requires=IS_IN_SET(SORT_TYPES)
 
 db.define_table(
     'topic', 
@@ -69,6 +72,7 @@ db.define_table(
     Field('latitude'),
     Field('longitude'),
     Field('address'),
+    Field('sort_value'),
     Field('description','text'),
     Field('topic','list:reference topic'),
     Field('region','list:reference region'),

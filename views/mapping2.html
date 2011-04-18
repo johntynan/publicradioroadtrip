@@ -51,10 +51,10 @@
     // centerChanged();
     setMarkers(map, stories);
 
+
     var storyPathCoordinates = [{{for story in story_list:}}
         new google.maps.LatLng('{{=story['latitude']}}', '{{=story['longitude']}}'),{{pass}}
         ];
-
         // alert(storyPathCoordinates);
 
     var storyPath = new google.maps.Polyline({
@@ -64,7 +64,10 @@
         strokeWeight: 2
         });
 
+    {{if collection.sort_type == 'None':}}
+    {{else:}}
     storyPath.setMap(map);
+    {{pass}}
 
   }
 
