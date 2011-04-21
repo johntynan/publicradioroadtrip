@@ -570,6 +570,9 @@ def view_collection():
     story_list = []
     region_list = []
     topic_list = []
+    
+    start_latlang = stories[0].latitude + ',' + stories[0].longitude
+    end_latlang = stories[length-1].latitude + ',' + stories[length-1].longitude
 
     if collection.sort_type == 'Date':
         for story in stories:
@@ -616,7 +619,7 @@ def view_collection():
                 topic_list.append(y)
     """
 
-    return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list)
+    return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang)
 
 def view_collection_feed():
     """ 
