@@ -571,8 +571,16 @@ def view_collection():
     region_list = []
     topic_list = []
     
+    end_latlang_length = length -1
+    """
+    # an attempt to get around the restriction:
+    # "The maximum allowed waypoints is 8, plus the origin, and destination."
+    if end_latlang_length > 8:
+        end_latlang_length = 8
+    """
+    
     start_latlang = stories[0].latitude + ',' + stories[0].longitude
-    end_latlang = stories[length-1].latitude + ',' + stories[length-1].longitude
+    end_latlang = stories[end_latlang_length].latitude + ',' + stories[end_latlang_length].longitude
 
     if collection.sort_type == 'Date':
         for story in stories:
