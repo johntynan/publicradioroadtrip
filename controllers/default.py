@@ -13,9 +13,96 @@ import gluon.contrib.rss2 as rss2
 import time, datetime, uuid, StringIO
 from sets import Set
 
+# begin PyGeoRSSGen
+# https://github.com/JoeGermuska/pygeorss
 
-# from here to roughly line 285, I am including KCRW’s python NPR API library, at least until I am able to properly import this from the site-packages directory. 
-# The KCRW’s python NPR API library was created by Alec Mitchell for KCRW, an NPR station based in Santa Monica, California.
+import gluon.contrib.rss2 as PyRSS2Gen
+import types
+
+def _seq_to_string(l):
+    """
+        Take an argument which may be a string or may be sequence.
+        if it's a string, return it unchanged; otherwise, return a string which has 
+        one space between each element as typical for GeoRSS formatting.
+        
+        Nothing is done to ensure that the string is formatted correctly, 
+        nor that the values of the sequence are correctly formatted. You're on
+        your own for that.
+    """
+    if type(l) in types.StringTypes:
+        return l
+    return " ".join(l)
+    
+class GeoRSSFeed(PyRSS2Gen.RSS2):
+    """Add the 'georss' namespace to the generated feed."""
+    def __init__(self,*args,**kwargs):
+        PyRSS2Gen.RSS2.__init__(self, *args, **kwargs)
+        self.rss_attrs['xmlns:georss'] = 'http://www.georss.org/georss'
+
+class GeoRSSItem(PyRSS2Gen.RSSItem):
+    """
+        Add the following properties to an RSSItem, with support for rendering them 
+        in the "simple" representation.
+            * point (sequence)
+            * line (sequence)
+            * polygon (sequence)
+            * box (sequence)
+            * featuretypetag
+            * relationshiptag
+            * featurename
+            * elev
+            * floor
+            * radius
+            
+        Each of these may be a string.  The types labeled "sequence" may also be a 
+        sequence, in which case they will be joined with whitespace separators according
+        to the GeoRSS standards.
+        
+        See http://www.georss.org/simple for more information.
+    """
+    properties = [
+        'point',
+        'line',
+        'polygon',
+        'box',
+        'featuretypetag',
+        'relationshiptag',
+        'featurename',
+        'elev',
+        'floor',
+        'radius',
+    ]
+
+    point = None
+    line = None
+    polygon = None
+    box = None
+    featuretypetag = None
+    relationshiptag = None
+    featurename = None
+    elev = None
+    floor = None
+    radius = None
+
+    def publish_extensions(self, handler):
+        for p in GeoRSSItem.properties:
+            value = getattr(self,p)
+            if value is not None:
+                PyRSS2Gen._element(handler,"georss:%s" % p, _seq_to_string(value))    
+
+    def __init__(self,**kwargs):
+        geokwargs = {}
+        for p in GeoRSSItem.properties:
+            if kwargs.has_key(p):
+                geokwargs[p] = kwargs.pop(p)
+        PyRSS2Gen.RSSItem.__init__(self, **kwargs)
+        for key in geokwargs:
+            setattr(self,key,geokwargs[key])
+
+# end PyGeoRSSGen
+
+# begin KCRW’s python NPR API library
+# The KCRW python NPR API library was created by Alec Mitchell for KCRW, an NPR station based in Santa Monica, California.
 # kcrw.nprapi is copyright 2010 KCRW
 # for additional information, see: http://packages.python.org/kcrw.nprapi/
 
@@ -271,18 +358,7 @@ class StoryMapping(object):
 
 api = StoryAPI('MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004', 'JSON')
 
-# since there was some trouble using the KCRW.NPRAPI module on GAE, I am removing it completely... for the moment.
-
-# this is what I should have been able to do:
-# import gluon.contrib.simplejson
-# from kcrw.nprapi.story import (StoryAPI,
-#                          StoryMapping,
-#                          NPRError,
-#                          OUTPUT_FORMATS,
-#                          QUERY_TERMS,
-#                          )
-#
-# api = StoryAPI('MDAxNzgwMDQ5MDEyMTQ4NzYyMjU4YmY1Yw004', 'JSON')
+# end KCRW’s python NPR API library
 
 def url(f, args=[]): return URL(r=request,f=f,args=args)
 
@@ -566,7 +642,11 @@ def view_collection():
     stories_by_sort_value=db(db.story.collection.contains(collection_id)).select(orderby=db.story.sort_value)
     topics=db(db.story.topic.contains(collection_id)).select(orderby=db.story.title)
     length=len(stories)
-
+    
+    scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
+    # link = scheme + '://' + request.env.http_host + request.env.path_info
+    link_to_feed = scheme + '://' + request.env.http_host + '/publicradioroadtrip/default/view_collection_feed/' + str(collection.id)
+        
     story_list = []
     region_list = []
     topic_list = []
@@ -627,7 +707,7 @@ def view_collection():
                 topic_list.append(y)
     """
 
-    return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang)
+    return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
 
 def view_collection_feed():
     """ 
@@ -639,21 +719,30 @@ def view_collection_feed():
     collection_id=request.args(0)
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
-    length=len(stories);
+    first_name = db(db.auth_user.id == db.auth_user.id==collection.created_by).select(db.auth_user.first_name).as_list()
+    first_name = first_name[0]['first_name']
+    last_name = db(db.auth_user.id == db.auth_user.id==collection.created_by).select(db.auth_user.last_name).as_list()
+    last_name = last_name[0]['last_name']
+    length=len(stories)
+    # print first_name
+    # print last_name
     scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
-
-    rss = rss2.RSS2(title=collection.title,
+    # rss = rss2.RSS2(title=collection.title,
+    rss = GeoRSSFeed(title=collection.title,
         link = scheme + '://' + request.env.http_host + request.env.path_info,
         description = collection.description,
         lastBuildDate = collection.modified_on,
         items = [
-            rss2.RSSItem(title = story.title,
+            # rss2.RSSItem(title = story.title,
+            GeoRSSItem(title = story.title,
+            author = first_name + ' ' + last_name,
             link = story.url,
             enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
             description = story.description,
+            point = story.latitude + ' ' + story.longitude,
             # comments = 'test',
             pubDate = story.date) for story in stories])
-
+            
     response.headers['Content-Type']='application/rss+xml'
     return rss2.dumps(rss)
 
