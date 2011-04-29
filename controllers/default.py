@@ -71,6 +71,7 @@ class GeoRSSItem(PyRSS2Gen.RSSItem):
         'elev',
         'floor',
         'radius',
+        'content',
     ]
 
     point = None
@@ -83,6 +84,7 @@ class GeoRSSItem(PyRSS2Gen.RSSItem):
     elev = None
     floor = None
     radius = None
+    content = None
 
     def publish_extensions(self, handler):
         for p in GeoRSSItem.properties:
@@ -739,6 +741,7 @@ def view_collection_feed():
             link = story.url,
             enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
             description = story.description,
+            content = '<p>' + story.description + '</p>' + '<p><a href="' + story.audio_url + '">Listen here</a></p>',
             point = story.latitude + ' ' + story.longitude,
             # comments = 'test',
             pubDate = story.date) for story in stories])
