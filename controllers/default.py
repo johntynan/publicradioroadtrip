@@ -749,6 +749,47 @@ def view_collection_feed():
     response.headers['Content-Type']='application/rss+xml'
     return rss2.dumps(rss)
 
+def view_collection_for_print():
+    stories = {}
+    collection_id=int(request.args(0))
+    collection = db.collection[collection_id] or redirect(error_page)
+    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.date)
+    
+    response.title = collection.title
+    
+    if request.extension=="pdf":
+        from gluon.contrib.pyfpdf import FPDF, HTMLMixin
+
+        # create a custom class with the required functionalities 
+        class MyFPDF(FPDF, HTMLMixin):
+            def header(self): 
+                "hook to draw custom page header"
+                self.set_font('Arial','B',15)
+                self.cell(65) # padding
+                self.cell(60,10,response.title,1,0,'C')
+                self.ln(20)
+                
+            def footer(self):
+                "hook to draw custom page footer (printing page numbers)"
+                self.set_y(-15)
+                self.set_font('Arial','I',8)
+                txt = 'Page %s of %s' % (self.page_no(), self.alias_nb_pages())
+                self.cell(0,10,txt,0,0,'C')
+                    
+        pdf=MyFPDF()
+        # create a page and serialize/render HTML objects
+        pdf.add_page()
+        pdf.write_html(str(XML(stories)))
+
+        # prepare PDF to download:
+        response.headers['Content-Type']='application/pdf'
+        return pdf.output(dest='S')
+        
+    else:
+        # normal html view:
+        return dict(collection=collection, stories=stories)
+
+
 def collection_markers():
     response.headers['Content-Type']='text/xml'
     stories = {}
