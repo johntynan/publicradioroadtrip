@@ -736,7 +736,7 @@ def view_collection_feed():
             # rss2.RSSItem(title = story.title,
             GeoRSSItem(title = story.title,
             author = first_name + ' ' + last_name,
-            link = story.audio_url,
+            link = story.url,
             enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
             description = story.description,
             point = story.latitude + ' ' + story.longitude,
