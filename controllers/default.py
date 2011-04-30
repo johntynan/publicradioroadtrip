@@ -749,12 +749,15 @@ def view_collection_feed():
     response.headers['Content-Type']='application/rss+xml'
     return rss2.dumps(rss)
 
-def view_collection_for_print():
+def view_collection_for_print():    
     stories = {}
     collection_id=int(request.args(0))
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.date)
-    
+
+    # table = SQLTABLE(stories, orderby=True, _class='sortable', _width="100%")
+    table = SQLTABLE(stories, columns=['story.title', 'story.address', 'story.description'], truncate=250)
+
     response.title = collection.title
     
     if request.extension=="pdf":
@@ -775,20 +778,24 @@ def view_collection_for_print():
                 self.set_font('Arial','I',8)
                 txt = 'Page %s of %s' % (self.page_no(), self.alias_nb_pages())
                 self.cell(0,10,txt,0,0,'C')
-                    
+
         pdf=MyFPDF()
         # create a page and serialize/render HTML objects
         pdf.add_page()
-        pdf.write_html(str(XML(stories)))
 
+        # pdf.write_html(str(XML(story_list)))
+        # pdf.write_html(str(HTML(DIV(story_list))))
+
+        # pdf.write_html(str(HTML(table)))
+        
         # prepare PDF to download:
         response.headers['Content-Type']='application/pdf'
         return pdf.output(dest='S')
         
     else:
         # normal html view:
-        return dict(collection=collection, stories=stories)
-
+        # return dict(collection=collection, stories=stories)
+        return str(table)
 
 def collection_markers():
     response.headers['Content-Type']='text/xml'
