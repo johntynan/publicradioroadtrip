@@ -13,6 +13,73 @@ import gluon.contrib.rss2 as rss2
 import time, datetime, uuid, StringIO
 from sets import Set
 
+
+##################
+# begin create_qrcode
+# be sure to add pygooglechart.py from http://pygooglechart.slowchop.com/
+# to your site-packages directory
+
+import os
+import sys
+import math
+
+ROOT = os.path.dirname(os.path.abspath(request.application))
+ROOT = ROOT + '/applications/publicradioroadtrip/static/qrcodes/'
+
+# print ROOT
+
+from pygooglechart import QRChart, Chart
+
+try:
+    # we're on Python3
+    from urllib.request import urlopen
+    from urllib.parse import quote
+
+except ImportError:
+    # we're on Python2.x
+    from urllib2 import urlopen
+    from urllib import quote
+    
+    
+import settings
+
+
+def create_qrcode(filename, data):
+
+    filename = str(filename)
+
+    # Create a 250x250 QR chart
+    chart = QRChart(500, 500)
+
+    # Add the text
+    chart.add_data(data)
+
+    # "Level H" error correction with a 0 pixel margin
+    chart.set_ec('H', 0)
+
+    filename = ROOT + filename + '.png'
+
+    # Download
+    # chart.download(ROOT + filename + '.png')
+    
+    Chart.BASE_URL = 'http://chart.apis.google.com/chart'
+
+    opener = urlopen(Chart.BASE_URL, Chart.get_url_extension(chart, data_class=None))
+
+    """
+    if opener.headers['content-type'] != 'image/png':
+        raise BadContentTypeException('Server responded with a ' \
+            'content-type of %s' % opener.headers['content-type'])
+    """
+
+    # open(filename, 'wb').write(opener.read())
+    
+    db.story.insert(qrcode=db.story.qrcode.store(opener,filename))
+
+# end create_qrcode
+
+#############
+
 # begin PyGeoRSSGen
 # https://github.com/JoeGermuska/pygeorss
 
@@ -593,7 +660,7 @@ def format_npr_story(nprid, story_id):
     # get address
     address=story.address
 
-    return dict(title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
 
 
 def format_local_story(story_id):
@@ -632,7 +699,7 @@ def format_local_story(story_id):
     # get address
     address=story.address
 
-    return dict(title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
 
 
 def view_collection():
@@ -680,6 +747,7 @@ def view_collection():
                 story_list.append(npr_story)
                 # print story_list
             else:
+                create_qrcode(story.id, story.audio_url)
                 x = format_local_story(story.id)
                 story_list.append(x)
     else: 
@@ -708,6 +776,9 @@ def view_collection():
             if y not in topic_list:
                 topic_list.append(y)
     """
+
+
+
 
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
 
