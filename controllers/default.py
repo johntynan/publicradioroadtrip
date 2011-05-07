@@ -57,7 +57,7 @@ def create_qrcode(filename, data):
     # "Level H" error correction with a 0 pixel margin
     chart.set_ec('H', 0)
 
-    filename = ROOT + filename + '.png'
+    # filename = ROOT + filename + '.png'
 
     # Download
     # chart.download(ROOT + filename + '.png')
@@ -74,6 +74,17 @@ def create_qrcode(filename, data):
 
     # open(filename, 'wb').write(opener.read())
     
+    story_id = filename
+    
+    filename = filename + '.png'
+
+    """
+    myset = db(db.story[story_id])
+    myset.update(qrcode=(opener,story_id))
+    myset.delete()
+    """
+    
+    # db.story[story_id].update(qrcode = db.story.qrcode.store(opener, filename))
     db.story.insert(qrcode=db.story.qrcode.store(opener,filename))
 
 # end create_qrcode
@@ -683,6 +694,11 @@ def format_local_story(story_id):
     else:
         audio_url = story.audio_url
 
+    # get qrcode
+    if story.qrcode != '':
+        qrcode_url = '../download/' + str(story.qrcode)
+    else:
+        qrcode_url = str(story.qrcode)
 
     # get topic
     topics=story.topic
@@ -699,7 +715,7 @@ def format_local_story(story_id):
     # get address
     address=story.address
 
-    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,qrcode_url=qrcode_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
 
 
 def view_collection():
