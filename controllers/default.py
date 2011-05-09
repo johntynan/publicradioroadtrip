@@ -43,13 +43,12 @@ except ImportError:
     
 import settings
 
-
 def create_qrcode(filename, data):
 
     filename = str(filename)
 
-    # Create a 250x250 QR chart
-    chart = QRChart(500, 500)
+    # Create a 400x400 QR chart
+    chart = QRChart(400, 400)
 
     # Add the text
     chart.add_data(data)
@@ -60,7 +59,13 @@ def create_qrcode(filename, data):
     # filename = ROOT + filename + '.png'
 
     # Download
+    # Calling the download function within pygooglechart
+    # unfortunately, I cannot save to the filesystem with GAE
+    # otherwise, this would work:
     # chart.download(ROOT + filename + '.png')
+
+
+    # modifying the Dowload function myself, here goes:
     
     Chart.BASE_URL = 'http://chart.apis.google.com/chart'
 
@@ -72,20 +77,16 @@ def create_qrcode(filename, data):
             'content-type of %s' % opener.headers['content-type'])
     """
 
+    # again, if I could write to the filesystem, this would be a piece of cake:
     # open(filename, 'wb').write(opener.read())
     
-    story_id = filename
-    
+    # created a qrcode property for stories
+    # updating this property with the generated png file
+    story_id = int(filename)
     filename = filename + '.png'
+    myset = db(db.story.id == story_id)
+    myset.update(qrcode = db.story.qrcode.store(opener, filename))
 
-    """
-    myset = db(db.story[story_id])
-    myset.update(qrcode=(opener,story_id))
-    myset.delete()
-    """
-    
-    # db.story[story_id].update(qrcode = db.story.qrcode.store(opener, filename))
-    db.story.insert(qrcode=db.story.qrcode.store(opener,filename))
 
 # end create_qrcode
 
@@ -653,6 +654,12 @@ def format_npr_story(nprid, story_id):
         audio_url = ''
     else:
         audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+        
+    # get qrcode
+    if story.qrcode != '':
+        qrcode_url = '../download/' + str(story.qrcode)
+    else:
+        qrcode_url = str(story.qrcode)
 
     # print(image_url)
 
@@ -671,7 +678,7 @@ def format_npr_story(nprid, story_id):
     # get address
     address=story.address
 
-    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,qrcode_url=qrcode_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
 
 
 def format_local_story(story_id):
