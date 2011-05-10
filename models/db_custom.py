@@ -9,6 +9,8 @@
 #     sys.path.insert(0, site_packages_path)
 # print site_packages_path
 
+# import os
+
 import uuid
 
 from gluon.tools import *
@@ -60,7 +62,6 @@ db.define_table(
     Field('modified_on','datetime',default=request.now,writable=False,readable=False)
     )
 
-                            
 db.define_table(
     'story', 
     # Field('uuid', length=64, default=uuid.uuid4(),writable=False,readable=False),
@@ -78,7 +79,7 @@ db.define_table(
     Field('region','list:reference region'),
     Field('image','upload'),
     Field('image_url'),
-    Field('qrcode','upload',readable=False),
+    Field('qrcode','upload'),
     Field('audio','upload'),
     Field('audio_url'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),
@@ -90,4 +91,3 @@ db.story.collection.requires=IS_IN_DB(db(db.collection.created_by==auth.user_id)
 db.story.topic.requires=IS_IN_DB(db(db.topic.created_by==auth.user_id),'topic.id','%(title)s', multiple=True) 
 db.story.region.requires=IS_IN_DB(db(db.region.created_by==auth.user_id),'region.id','%(title)s', multiple=True) 
 db.story.date.requires=IS_DATETIME('%Y-%m-%d %H:%M:%S')
-

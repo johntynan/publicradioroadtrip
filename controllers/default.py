@@ -64,13 +64,12 @@ def create_qrcode(filename, data):
     # otherwise, this would work:
     # chart.download(ROOT + filename + '.png')
 
-
     # modifying the Dowload function myself, here goes:
     
     Chart.BASE_URL = 'http://chart.apis.google.com/chart'
 
     opener = urlopen(Chart.BASE_URL, Chart.get_url_extension(chart, data_class=None))
-
+    
     """
     if opener.headers['content-type'] != 'image/png':
         raise BadContentTypeException('Server responded with a ' \
@@ -85,8 +84,8 @@ def create_qrcode(filename, data):
     story_id = int(filename)
     filename = filename + '.png'
     myset = db(db.story.id == story_id)
-    myset.update(qrcode = db.story.qrcode.store(opener, filename))
-
+    # commenting this out for a bit
+    # myset.update(qrcode = db.story.qrcode.store(opener, filename))
 
 # end create_qrcode
 
@@ -770,7 +769,8 @@ def view_collection():
                 story_list.append(npr_story)
                 # print story_list
             else:
-                create_qrcode(story.id, story.audio_url)
+                # commenting this out for a bit
+                # create_qrcode(story.id, story.audio_url)
                 x = format_local_story(story.id)
                 story_list.append(x)
     else: 
