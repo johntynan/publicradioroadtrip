@@ -815,11 +815,14 @@ def view_collection_feed():
     collection_id=request.args(0)
     collection = db.collection[collection_id] or redirect(error_page)
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
+    email = db(db.auth_user.id == db.auth_user.id==collection.created_by).select(db.auth_user.email).as_list()
+    email = email[0]['email']
     first_name = db(db.auth_user.id == db.auth_user.id==collection.created_by).select(db.auth_user.first_name).as_list()
     first_name = first_name[0]['first_name']
     last_name = db(db.auth_user.id == db.auth_user.id==collection.created_by).select(db.auth_user.last_name).as_list()
     last_name = last_name[0]['last_name']
     length=len(stories)
+    # print email
     # print first_name
     # print last_name
     scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
@@ -831,8 +834,9 @@ def view_collection_feed():
         items = [
             # rss2.RSSItem(title = story.title,
             GeoRSSItem(title = story.title,
-            author = first_name + ' ' + last_name,
+            author = email + '(' + first_name + ' ' + last_name + ')',
             link = story.url,
+            guid = story.url,
             enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
             description = story.description,
             content = '<p><a href="' + story.audio_url + '">Listen here</a></p>',
