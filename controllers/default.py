@@ -836,7 +836,7 @@ def view_collection_feed():
             GeoRSSItem(title = story.title,
             author = email + '(' + first_name + ' ' + last_name + ')',
             link = story.url,
-            guid = story.url,
+            guid = scheme + '://' + request.env.http_host + '/publicradioroadtrip/default/view_story/' + str(story.id),
             enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
             description = story.description,
             content = '<p><a href="' + story.audio_url + '">Listen here</a></p>',
