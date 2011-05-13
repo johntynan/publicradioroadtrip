@@ -29,13 +29,19 @@
   var directionsService = new google.maps.DirectionsService();
 
     {{k =length}}
+    // the stories array will be used in setMarkers to display markers and info ballons on the map.
     var stories = [{{for story in story_list:}}
     ['{{=story['title']}}', {{=story['latitude']}}, {{=story['longitude']}}, '{{=story['description']}}', '{{=story['url']}}','{{=story['date']}}','{{=story['image_url']}}','{{=story['audio_url']}}'],{{pass}}
     ];
 
     
   function initialize(){
+    // this function sets up the map
+    
+    // latlng is used to set the center of the map
     var latlng = new google.maps.LatLng({{=story_list[0]['latitude']}},{{=story_list[0]['longitude']}});
+    
+    // description here
     directionsDisplay = new google.maps.DirectionsRenderer();
     
     var myOptions = {
@@ -56,17 +62,30 @@
 
     };
     map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    // geocoder = new google.maps.Geocoder();
 
+    // description here about why these are commented out???
+    // geocoder = new google.maps.Geocoder();
     // setupEvents();
     // centerChanged();
+    
+    // this calls the setMarkers function, displays stories on the map
     setMarkers(map, stories);
+    
+    // this sets up the map to display directions
     directionsDisplay.setMap(map);
+    
+    // this supresses the markers of the directions display
     directionsDisplay.suppressMarkers = true;
+    
+    // this calls the calcRoute function which draws lines between points on the map
     calcRoute();
     
+
     function calcRoute() {
+    // This function renders driving directions
     
+    /* waypts is similar to the story array above, only this is an associative array, as oppsed to a two dimensional array.  The tutorial that I was using as a template uses a different data type, so I have two variables doing about the same thing.  At some point, I should decide on one variable/type and change the code so that this page to reference only the one array.
+    */
     var waypts = [{{for story in story_list:}}
     {location: new google.maps.LatLng({{=story['latitude']}}, {{=story['longitude']}})},{{pass}}
     ];
@@ -104,7 +123,11 @@
         });
     }
     
-        
+    // End calcPath
+    
+    // Begin storyPath
+    // storyPath draws lines between points on the map.
+
     var storyPathCoordinates = [{{for story in story_list:}}
         new google.maps.LatLng('{{=story['latitude']}}', '{{=story['longitude']}}'),{{pass}}
         ];
@@ -120,8 +143,16 @@
     {{if collection.sort_type == 'None':}}
     {{else:}}
     // storyPath.setMap(map);
+    /* 
+    Commenting out storyPath for the moment.
+    I thought this would approximate driving directions, but it doesn't.
+    I'm keeping this here, just in case.  Just uncomment the line above to activate.
+    */
+    
     {{pass}}
-
+    
+    // End storyPath
+    
   }
 
 function bindInfoWindow(marker, contentString, infowindow)
@@ -133,6 +164,7 @@ function bindInfoWindow(marker, contentString, infowindow)
 }
 
 function setMarkers(map, stories) {
+    // setMarkers displays markers on the map
  
     // alert(stories.length);
     for (var i = 0; i < stories.length; i++) {
@@ -144,7 +176,7 @@ function setMarkers(map, stories) {
             title: story[0],
             zIndex: i
         });
-
+    // contentString contains the formatting for the information bubbles that appear when someone clicks on a pin on the map.
     var contentString = '<div id="content">'+
     '<h4 id="firstHeading" class="firstHeading">' + story[0] + '</h4>'+
     '<div id="bodyContent">'+
@@ -200,7 +232,8 @@ function setMarkers(map, stories) {
     document.getElementById('formatedAddress').innerHTML = '';
     currentReverseGeocodeResponse = null;
   }
- 
+
+  // begin geocoding block.  This should probably be commented more fully.
   function reverseGeocode() {
     reverseGeocodedLast = new Date();
     geocoder.geocode({latLng:map.getCenter()},reverseGeocodeResult);
@@ -218,7 +251,6 @@ function setMarkers(map, stories) {
       document.getElementById('formatedAddress').innerHTML = 'Error';
     }
   }
- 
  
   function geocode() {
     var address = document.getElementById("address").value;
@@ -264,6 +296,7 @@ function setMarkers(map, stories) {
     // alert(map.getCenter().lng());
     document.story_form.story_latitude.value = map.getCenter().lat();
     document.story_form.story_longitude.value = map.getCenter().lng();
+    // end geocoding block
   }
 
 
