@@ -85,7 +85,7 @@ def create_qrcode(filename, data):
     filename = filename + '.png'
     myset = db(db.story.id == story_id)
     # commenting this out for a bit
-    # myset.update(qrcode = db.story.qrcode.store(opener, filename))
+    myset.update(qrcode = db.story.qrcode.store(opener, filename))
 
 # end create_qrcode
 
@@ -769,8 +769,6 @@ def view_collection():
                 story_list.append(npr_story)
                 # print story_list
             else:
-                # commenting this out for a bit
-                # create_qrcode(story.id, story.audio_url)
                 x = format_local_story(story.id)
                 story_list.append(x)
     else: 
@@ -908,8 +906,24 @@ def edit_story():
     story_id=request.args(0)
     story=db.story[story_id] or redirect(error_page)
     form=crud.update(db.story,story,next=url('view_story',story_id))
+    """
+    form=crud.update(db.story,story)
+    if form.accepts(request.vars, session):
+        create_qrcode(story.id, story.audio_url)
+        session.flash = 'Record Updated'
+        redirect(URL('default/view_story',story_id))
+    """
     return dict(form=form)
 
+"""
+@auth.requires_login()
+def add_story():
+    form = SQLFORM(db.story)
+    if form.accepts(request.vars, session):
+        create_qrcode(form.vars.id, form.vars.audio_url)
+        session.flash = 'Record Updated'
+    return dict(form=form)
+"""
 
 def user():
     """
