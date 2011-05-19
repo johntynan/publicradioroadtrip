@@ -554,7 +554,6 @@ def add_collection():
 @auth.requires_login()
 def add_story():
 
-
     form = SQLFORM(db.story, _name='story_form', hidden_fields=['title'])
 
     if request.vars.nprid:
@@ -609,6 +608,7 @@ def view_story():
     return dict(collection=story.collection, story=story, stories=stories, length=length, regions=regions, topics=topics, story_list=story_list)
 
 def format_npr_story(nprid, story_id):
+    
     story=db.story[story_id]
 
     # get the story from the npr api as a json string
@@ -678,7 +678,6 @@ def format_npr_story(nprid, story_id):
     address=story.address
 
     return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,qrcode_url=qrcode_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
-
 
 def format_local_story(story_id):
     story=db.story[story_id]
@@ -803,6 +802,36 @@ def view_collection():
 
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
 
+def format_audio_url(story_id):
+    story=db.story[story_id]
+
+    if story.nprid != '':
+        # get the story from the npr api as a json string
+        json = api.query(story.nprid)
+    
+        # turn the json string into a dictionary
+        # json = 'Some sample text.'
+        # results = 'Some sample text.'
+        results = json
+        results = simplejson.loads(results)
+        # print results
+    
+        # get audio
+        try:
+            results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+        except KeyError:
+            audio_url = ''
+        else:
+            audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+    else:
+        if story.audio != '':
+            audio_url = '../download/' + story.audio
+        else:
+            audio_url = story.audio_url
+
+    return(audio_url)
+
+
 def view_collection_feed():
     """ 
     Creates an rss feed.  Creates items (based on stories) for this feed.  Items have audio enclosures (will these always be mp3?).
@@ -837,7 +866,7 @@ def view_collection_feed():
             guid = scheme + '://' + request.env.http_host + '/publicradioroadtrip/default/view_story/' + str(story.id),
             enclosure = rss2.Enclosure(story.audio_url, 0, 'audio/mpeg'),
             description = story.description,
-            content = '<p><a href="' + story.audio_url + '">Listen here</a></p>',
+            content = '<p><a href="' + format_audio_url(story.id) + '">Listen here</a></p>',
             point = story.latitude + ' ' + story.longitude,
             # comments = 'test',
             pubDate = story.date) for story in stories])
