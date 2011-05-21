@@ -79,7 +79,6 @@ db.define_table(
     Field('region','list:reference region'),
     Field('image','upload'),
     Field('image_url'),
-    Field('qrcode','upload'),
     Field('audio','upload'),
     Field('audio_url'),
     Field('created_by', db.auth_user, default=user_id, writable=False, readable=False),

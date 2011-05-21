@@ -56,18 +56,20 @@ http://maps.google.com/maps?f=q&source=s_q&geocode=&q={{=link_to_feed}}" target=
 {{=story['description']}}
 </div>
 
-<h3>Audio</h3>
+<h3>QRCode for Audio</h3>
 <div>
-<!-- img src="{{=story['qrcode_url']}}"><br -->
-{{=story['audio_url']}}
+<script type="text/javascript">
+document.write('<img src=\"http://chart.apis.google.com/chart?chs=400x400&cht=qr&chl={{=story['audio_url']}}\">');
+</script><br />
+<!-- {{=story['audio_url']}} -->
 </div>
 
-<h3>Mapping Information</h3>
+<h3>Location</h3>
 <div>
 
-{{=story['latitude']}}<br />
-{{=story['longitude']}}<br />
-{{=story['address']}}<br />
+Latitude: {{=story['latitude']}}<br />
+Longitude: {{=story['longitude']}}<br />
+Address: {{=story['address']}}<br />
 </div>
 
 </div>

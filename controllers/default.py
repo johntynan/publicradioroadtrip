@@ -13,84 +13,7 @@ import gluon.contrib.rss2 as rss2
 import time, datetime, uuid, StringIO
 from sets import Set
 
-
-##################
-# begin create_qrcode
-# be sure to add pygooglechart.py from http://pygooglechart.slowchop.com/
-# to your site-packages directory
-
-import os
-import sys
-import math
-
-ROOT = os.path.dirname(os.path.abspath(request.application))
-ROOT = ROOT + '/applications/publicradioroadtrip/static/qrcodes/'
-
-# print ROOT
-
-from pygooglechart import QRChart, Chart
-
-try:
-    # we're on Python3
-    from urllib.request import urlopen
-    from urllib.parse import quote
-
-except ImportError:
-    # we're on Python2.x
-    from urllib2 import urlopen
-    from urllib import quote
-    
-    
-import settings
-
-def create_qrcode(filename, data):
-
-    filename = str(filename)
-
-    # Create a 400x400 QR chart
-    chart = QRChart(400, 400)
-
-    # Add the text
-    chart.add_data(data)
-
-    # "Level H" error correction with a 0 pixel margin
-    chart.set_ec('H', 0)
-
-    # filename = ROOT + filename + '.png'
-
-    # Download
-    # Calling the download function within pygooglechart
-    # unfortunately, I cannot save to the filesystem with GAE
-    # otherwise, this would work:
-    # chart.download(ROOT + filename + '.png')
-
-    # modifying the Dowload function myself, here goes:
-    
-    Chart.BASE_URL = 'http://chart.apis.google.com/chart'
-
-    opener = urlopen(Chart.BASE_URL, Chart.get_url_extension(chart, data_class=None))
-    
-    """
-    if opener.headers['content-type'] != 'image/png':
-        raise BadContentTypeException('Server responded with a ' \
-            'content-type of %s' % opener.headers['content-type'])
-    """
-
-    # again, if I could write to the filesystem, this would be a piece of cake:
-    # open(filename, 'wb').write(opener.read())
-    
-    # created a qrcode property for stories
-    # updating this property with the generated png file
-    story_id = int(filename)
-    filename = filename + '.png'
-    myset = db(db.story.id == story_id)
-    # commenting this out for a bit
-    myset.update(qrcode = db.story.qrcode.store(opener, filename))
-
-# end create_qrcode
-
 #############
-
 # begin PyGeoRSSGen
 # https://github.com/JoeGermuska/pygeorss
 
@@ -570,13 +493,21 @@ def add_story():
         response.flash='record inserted'
 
         story_id = dict(form.vars)['id']
+        
         story = db(db.story.id==story_id).select()
-
+        
         redirect(URL(r=request, f='list_stories'))
 
     elif form.errors: response.flash='form errors'
-    return dict(form=form)    
+    return dict(form=form)
 
+@auth.requires_login()
+def edit_story():
+    story_id=request.args(0)
+    story=db.story[story_id] or redirect(error_page)
+    form=crud.update(db.story,story,next=url('view_story',story_id))
+    return dict(form=form)
+    
 @auth.requires_login()
 def list_stories():
     stories=db(db.story.created_by==auth.user_id).select(orderby=db.story.title)
@@ -653,12 +584,6 @@ def format_npr_story(nprid, story_id):
         audio_url = ''
     else:
         audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
-        
-    # get qrcode
-    if story.qrcode != '':
-        qrcode_url = '../download/' + str(story.qrcode)
-    else:
-        qrcode_url = str(story.qrcode)
 
     # print(image_url)
 
@@ -677,7 +602,7 @@ def format_npr_story(nprid, story_id):
     # get address
     address=story.address
 
-    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,qrcode_url=qrcode_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
 
 def format_local_story(story_id):
     story=db.story[story_id]
@@ -699,12 +624,6 @@ def format_local_story(story_id):
     else:
         audio_url = story.audio_url
 
-    # get qrcode
-    if story.qrcode != '':
-        qrcode_url = '../download/' + str(story.qrcode)
-    else:
-        qrcode_url = str(story.qrcode)
-
     # get topic
     topics=story.topic
 
@@ -720,7 +639,7 @@ def format_local_story(story_id):
     # get address
     address=story.address
 
-    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,qrcode_url=qrcode_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
+    return dict(story_id=story_id,title=title,description=description,url=url,date=date,audio_url=audio_url,image_url=image_url,latitude=latitude,longitude=longitude,address=address,topics=topics,regions=regions)
 
 
 def view_collection():
@@ -930,29 +849,6 @@ def collection_markers():
     stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.title)
     return dict(collection=collection, stories=stories)
 
-@auth.requires_login()
-def edit_story():
-    story_id=request.args(0)
-    story=db.story[story_id] or redirect(error_page)
-    form=crud.update(db.story,story,next=url('view_story',story_id))
-    """
-    form=crud.update(db.story,story)
-    if form.accepts(request.vars, session):
-        create_qrcode(story.id, story.audio_url)
-        session.flash = 'Record Updated'
-        redirect(URL('default/view_story',story_id))
-    """
-    return dict(form=form)
-
-"""
-@auth.requires_login()
-def add_story():
-    form = SQLFORM(db.story)
-    if form.accepts(request.vars, session):
-        create_qrcode(form.vars.id, form.vars.audio_url)
-        session.flash = 'Record Updated'
-    return dict(form=form)
-"""
 
 def user():
     """
