@@ -917,6 +917,85 @@ def view_collection_gpx():
 
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
 
+def view_collection_embed():
+    stories = {}
+    stories_by_sort_value = {}
+    collection_id=int(request.args(0))
+    collection = db.collection[collection_id] or redirect(error_page)
+    stories=db(db.story.collection.contains(collection_id)).select(orderby=db.story.date)
+    stories_by_sort_value=db(db.story.collection.contains(collection_id)).select(orderby=db.story.sort_value)
+    topics=db(db.story.topic.contains(collection_id)).select(orderby=db.story.title)
+    length=len(stories)
+    
+    scheme = request.env.get('WSGI_URL_SCHEME', 'http').lower()
+    # link = scheme + '://' + request.env.http_host + request.env.path_info
+    link_to_feed = scheme + '://' + request.env.http_host + '/publicradioroadtrip/default/view_collection_feed/' + str(collection.id)
+        
+    story_list = []
+    region_list = []
+    topic_list = []
+    
+    end_latlang_length = length -1
+    """
+    # an attempt to get around the restriction:
+    # "The maximum allowed waypoints is 8, plus the origin, and destination."
+    if end_latlang_length > 8:
+        end_latlang_length = 8
+    """
+    
+    start_latlang = stories[0].latitude + ',' + stories[0].longitude
+    end_latlang = stories[end_latlang_length].latitude + ',' + stories[end_latlang_length].longitude
+
+    if collection.sort_type == 'Date':
+        for story in stories:
+            if story.nprid != '':
+                npr_story = format_npr_story(story.nprid, story.id)
+                story_list.append(npr_story)
+                # print story_list
+            else:
+                x = format_local_story(story.id)
+                story_list.append(x)
+    elif collection.sort_type == 'Sort Values':
+        for story in stories_by_sort_value:
+            if story.nprid != '':
+                npr_story = format_npr_story(story.nprid, story.id)
+                story_list.append(npr_story)
+                # print story_list
+            else:
+                x = format_local_story(story.id)
+                story_list.append(x)
+    else: 
+        for story in stories:
+            if story.nprid != '':
+                npr_story = format_npr_story(story.nprid, story.id)
+                story_list.append(npr_story)
+                # print story_list
+            else:
+                x = format_local_story(story.id)
+                story_list.append(x)
+    
+    # this needs to be fixed:
+    """
+    for story in stories:
+        if story.region != '':
+            x = int(story.region[0])
+            y = db.region[x]
+            if y not in region_list:
+                region_list.append(y)
+
+    for story in stories:
+        if story.topic != '':
+            x = int(story.topic[0])
+            y = db.topic[x]
+            if y not in topic_list:
+                topic_list.append(y)
+    """
+
+
+
+
+    return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
+    
 
 def collection_markers():
     response.headers['Content-Type']='text/xml'
