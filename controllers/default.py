@@ -531,12 +531,17 @@ def view_story():
     if story.nprid != '':
         npr_story = format_npr_story(story.nprid, story.id)
         story_list.append(npr_story)
-        print story_list
+        # print story_list
     else:
         x = format_local_story(story.id)
         story_list.append(x)
 
     return dict(collection=story.collection, story=story, stories=stories, length=length, regions=regions, topics=topics, story_list=story_list)
+
+def published_stories():
+
+    stories=db(db.story.published==1).select(orderby=db.story.title)
+    return dict(stories=stories)
 
 def format_npr_story(nprid, story_id):
     
@@ -568,6 +573,8 @@ def format_npr_story(nprid, story_id):
 
     # get date
     date = results['list']['story'][0]['pubDate'].values()[0]
+
+    # date = time.strftime(date, "%d %b %y")
 
     # get image
     try:
@@ -611,7 +618,9 @@ def format_local_story(story_id):
     description = story.description
     url = story.url
     date = story.date
-
+    
+    # date = time.strftime(date, "%d %b %y")
+    
     # get image
     if story.image != '':
         image_url = '../download/' + story.image
@@ -715,10 +724,7 @@ def view_collection():
             if y not in topic_list:
                 topic_list.append(y)
     """
-
-
-
-
+    
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
 
 def format_audio_url(story_id):
@@ -914,7 +920,6 @@ def view_collection_gpx():
             if y not in topic_list:
                 topic_list.append(y)
     """
-
     return dict(collection=collection, stories=stories, length=length, region_list=region_list, topic_list=topic_list, story_list=story_list, start_latlang=start_latlang, end_latlang=end_latlang, link_to_feed=link_to_feed)
 
 def view_collection_embed():

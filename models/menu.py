@@ -18,6 +18,7 @@ if auth.is_logged_in():
         ['Home', False, URL(request.application,'default','index')],
         ['My Stories', False, URL(request.application,'default','list_stories')],
         ['Add Story', False, URL(request.application,'default','add_story')],
+        ['Published Stories', False, URL(request.application,'default','published_stories')],
         ['My Neighborhoods', False, URL(request.application,'default','list_regions')],
         ['Add Neighborhood', False, URL(request.application,'default','add_region')],
         ['My Topics', False, URL(request.application,'default','list_topics')],
@@ -29,6 +30,7 @@ if auth.is_logged_in():
 else:
     response.menu = [
         ['Home', False, URL(request.application,'default','index')],
+        ['Published Stories', False, URL(request.application,'default','published_stories')],
         ['Published Roadtrips', False, URL(request.application,'default','published_collections')],
         ]
 '''

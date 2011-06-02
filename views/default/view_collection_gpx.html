@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="Oregon 400t" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
+creator="Public Radio Roadtrip - http://publicradioroadtrip.appspot.com/publicradioroadtrip/"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
     <metadata>
         <link href="{{=link_to_feed}}">
             <text>Public Radio Roadtrip: {{=collection.title}}</text>
         </link>
     </metadata>
+    {{for story in story_list:}}
+    <wpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}">
+        <time>{{=story['date']}}</time>
+        <name>{{=story['title']}}</name>
+        <url>{{=story['audio_url']}}</url>
+    </wpt>{{pass}}
     <trk>
     <name>{{=collection.title}}</name>     
     {{for story in story_list:}}
-    <wpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}">
-        <name>{{=story['title']}}</name>
-        <desc>{{=story['description']}}</desc>
-        <url>{{=story['audio_url']}}</url>
-    </wpt>
     <trkseg> 
       <trkpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}"> 
-        <time>{{=story['date']}}</time> 
       </trkpt> 
     </trkseg>{{pass}}
-  </trk> 
+  </trk>
 </gpx>
