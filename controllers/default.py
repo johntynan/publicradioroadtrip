@@ -513,7 +513,6 @@ def list_stories():
     stories=db(db.story.created_by==auth.user_id).select(orderby=db.story.title)
     return dict(stories=stories)
 
-@auth.requires_login()
 def view_story():
     id=request.args(0)
     story=db.story[id] or redirect(error_page)
