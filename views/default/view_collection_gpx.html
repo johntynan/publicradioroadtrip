@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1"
-creator="Public Radio Roadtrip - http://publicradioroadtrip.appspot.com/publicradioroadtrip/"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v2" creator="Public Radio Roadtrip" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v2 http://www.garmin.com/xmlschemas/TrackPointExtensionv2.xsd">
     <metadata>
         <link href="{{=link_to_feed}}">
             <text>Public Radio Roadtrip: {{=collection.title}}</text>
@@ -9,16 +7,20 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http:/
     </metadata>
     {{for story in story_list:}}
     <wpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}">
-        <time>{{=story['date']}}</time>
+        <ele>-0.0</ele>
         <name>{{=story['title']}}</name>
+        <desc>{{=story['description']}}</desc>
         <url>{{=story['audio_url']}}</url>
-    </wpt>{{pass}}
+        <sym>Waypoint</sym>
+        <extensions> 
+        <sym>Waypoint</sym><extensions><gpxx:WaypointExtension><gpxx:Categories><gpxx:Category>Address</gpxx:Category></gpxx:Categories><gpxx:Address><gpxx:StreetAddress>{{=story['address']}}</gpxx:StreetAddress></gpxx:Address></gpxx:WaypointExtension></extensions></wpt>{{pass}}
     <trk>
-    <name>{{=collection.title}}</name>     
-    {{for story in story_list:}}
-    <trkseg> 
-      <trkpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}"> 
-      </trkpt> 
-    </trkseg>{{pass}}
+    <trkseg>
+    <name>{{=collection.title}}</name>
+        {{for story in story_list:}}
+        <trkpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}">
+        <ele>0.0</ele>
+      </trkpt>{{pass}} 
+    </trkseg>
   </trk>
 </gpx>
