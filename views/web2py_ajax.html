@@ -1,20 +1,22 @@
 {{
-response.files.insert(0,URL(r=request,c='static',f='jquery.js'))
-response.files.insert(1,URL(r=request,c='static',f='calendar.css'))
-response.files.insert(2,URL(r=request,c='static',f='calendar.js'))
+response.files.insert(0,URL('static','js/jquery.js'))
+response.files.insert(1,URL('static','css/calendar.css'))
+response.files.insert(2,URL('static','js/calendar.js'))
 for _item in response.meta or []:}}
      <meta name="{{=_item}}" content="{{=response.meta[_item]}}" />{{
 pass
 for _k,_file in enumerate(response.files or []):
   if _file in response.files[:_k]:
      continue
-  elif _file.lower().endswith('.css'):}}
+  _file0=_file.lower().split('?')[0]
+  if _file0.endswith('.css'):}}
      <link href="{{=_file}}" rel="stylesheet" type="text/css" />{{
-  elif _file.lower().endswith('.js'):}}
+  elif _file0.endswith('.js'):}}
      <script src="{{=_file}}" type="text/javascript"></script>{{
   pass
 pass
 }}
+  
 <script type="text/javascript"><!--
 function popup(url) {
   newwindow=window.open(url,'name','height=400,width=600');
@@ -31,36 +33,41 @@ function ajax(u,s,t) {
     } else {
         pcs = [];
         for(i=0; i<s.length; i++) {
-            q = jQuery("#"+s[i]).serialize();
+            q = jQuery("[name="+s[i]+"]").serialize();
             if(q){pcs.push(q);}
         }
         if (pcs.length>0){query = pcs.join("&");}
     }
     jQuery.ajax({type: "POST", url: u, data: query, success: function(msg) { if(t) { if(t==':eval') eval(msg); else jQuery("#" + t).html(msg); } } }); 
 }
+
 String.prototype.reverse = function () { return this.split('').reverse().join('');};
 function web2py_ajax_init() {
   jQuery('.hidden').hide();
   jQuery('.error').hide().slideDown('slow');
   jQuery('.flash').click(function() { jQuery(this).fadeOut('slow'); return false; });
-  jQuery('input.integer').keyup(function(){this.value=this.value.reverse().replace(/[^0-9\-]|\-(?=.)/g,'').reverse();});
-  jQuery('input.double').keyup(function(){this.value=this.value.reverse().replace(/[^0-9\-\.]|[\-](?=.)|[\.](?=[0-9]*[\.])/g,'').reverse();});
-  jQuery("input[type='checkbox'].delete").each(function(){jQuery(this).click(function() { if(this.checked) if(!confirm("{{=T('Sure you want to delete this object?')}}")) this.checked=false; });});
-  try {jQuery("input.date").focus( function() {Calendar.setup({
-     inputField:this.id, ifFormat:"{{=T('%Y-%m-%d')}}", showsTime:false
+  // jQuery('input[type=submit]').click(function(){var t=jQuery(this);t.hide();t.after('<input class="submit_disabled" disabled="disabled" type="submit" name="'+t.attr("name")+'_dummy" value="'+t.val()+'">')});
+  jQuery('input.integer').live('keyup', function(){this.value=this.value.reverse().replace(/[^0-9\-]|\-(?=.)/g,'').reverse();});
+  jQuery('input.double,input.decimal').live('keyup', function(){this.value=this.value.reverse().replace(/[^0-9\-\.,]|[\-](?=.)|[\.,](?=[0-9]*[\.,])/g,'').reverse();});
+  jQuery("input[type='checkbox'].delete").live('click', function(){ if(this.checked) if(!confirm("{{=T('Sure you want to delete this object?')}}")) this.checked=false; });
+  try {jQuery("input.date").live('focus',function() {Calendar.setup({
+     inputField:this, ifFormat:"{{=T('%Y-%m-%d')}}", showsTime:false
   }); }); } catch(e) {};
-  try { jQuery("input.datetime").focus( function() {Calendar.setup({
-     inputField:this.id, ifFormat:"{{=T('%Y-%m-%d %H:%M:%S')}}", showsTime: true,timeFormat: "24"
+  try { jQuery("input.datetime").live('focus', function() {Calendar.setup({
+     inputField:this, ifFormat:"{{=T('%Y-%m-%d %H:%M:%S')}}", showsTime: true,timeFormat: "24"
   }); }); } catch(e) {};
-  try { jQuery("input.time").clockpick({
-      starthour:0, endhour:23, showminutes:true, military:true
-  }); } catch(e) {};
-};
-jQuery(document).ready(function(){
-   jQuery('.flash').hide();
-   if(jQuery('.flash').html()!='') jQuery('.flash').slideDown('slow');
-   web2py_ajax_init();});
 
+  jQuery("input.time").live('focus', function() { var el = jQuery(this); 
+          if (!el.hasClass('hasTimeEntry')) try { el.timeEntry(); } catch(e) {}; 
+  });
+};
+
+jQuery(function() {   
+   var flash = jQuery('.flash');
+   flash.hide();
+   if(flash.html()) flash.slideDown();
+   web2py_ajax_init();
+});
 function web2py_trap_form(action,target) {
    jQuery('#'+target+' form').each(function(i){
       var form=jQuery(this);
@@ -72,26 +79,37 @@ function web2py_trap_form(action,target) {
       });
    });
 }
-
 function web2py_ajax_page(method,action,data,target) {
   jQuery.ajax({'type':method,'url':action,'data':data,
-    'beforeSend':function(xhr){
+    'beforeSend':function(xhr) {
       xhr.setRequestHeader('web2py-component-location',document.location);
       xhr.setRequestHeader('web2py-component-element',target);},
     'complete':function(xhr,text){
-      command=xhr.getResponseHeader('web2py-component-command');
-      if(command) eval(command);
-      flash=xhr.getResponseHeader('web2py-component-flash');
-      if(flash) jQuery('.flash').html(flash).slideDown();
-      },
-    'success': function(text) {
-      jQuery('#'+target).html(text);
+      var html=xhr.responseText;
+      var content=xhr.getResponseHeader('web2py-component-content'); 
+      var command=xhr.getResponseHeader('web2py-component-command');
+      var flash=xhr.getResponseHeader('web2py-component-flash');
+      var t = jQuery('#'+target);
+      if(content=='prepend') t.prepend(html); 
+      else if(content=='append') t.append(html);
+      else if(content!='hide') t.html(html);  
       web2py_trap_form(action,target);
-      web2py_ajax_init();
+      web2py_ajax_init();      
+      if(command) eval(command);
+      if(flash) jQuery('.flash').html(flash).slideDown();
       }
     });
 }
 function web2py_component(action,target) {
-    jQuery(document).ready(function(){ web2py_ajax_page('get',action,null,target); });
+  jQuery(function(){ web2py_ajax_page('get',action,null,target); });
+}
+function web2py_comet(url,onmessage,onopen,onclose) {
+  if ("WebSocket" in window) {
+    var ws = new WebSocket(url);
+    ws.onopen = onopen?onopen:(function(){});
+    ws.onmessage = onmessage;
+    ws.onclose = onclose?onclose:(function(){});
+    return true; // supported
+  } else return false; // not supported
 }
 //--></script>

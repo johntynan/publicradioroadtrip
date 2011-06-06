@@ -58,6 +58,7 @@
     else: right_sidebar_style = 'style="display: none;"'
     style_content = 'style="width: %s"' % width_content
     }}
+    {{include 'mapping_add_story.html'}}
   </head>
   
   <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->	
@@ -65,7 +66,7 @@
   <!--[if IE 7 ]>    <body class="ie7"> <![endif]-->
   <!--[if IE 8 ]>    <body class="ie8"> <![endif]-->
   <!--[if IE 9 ]>    <body class="ie9"> <![endif]-->
-  <!--[if (gt IE 9)|!(IE)]><!--> <body> <!--<![endif]-->
+  <!--[if (gt IE 9)|!(IE)]><!--> <body onload="initialize()"> <!--<![endif]-->
     
     <div class="flash">{{=response.flash or ''}}</div> <!-- notification div -->
     
