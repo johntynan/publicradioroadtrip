@@ -76,7 +76,8 @@
 	<div id="header"> <!-- header and login nav -->
 	  {{block header}} <!-- this is default header -->
 	  {{try:}}{{=auth.navbar(action=URL('default','user'))}}{{except:pass}}		          
-	  <h1><span id="appname">{{=request.application.capitalize()}}</span>App</h1>
+	  <h1><span id="appname">{{=response.title}}</span></h1>
+      <span>{{=response.subtitle}}</span>
 	  <div style="clear: both;"></div><!-- Clear the divs -->
 	  {{end}}				  					  
 	</div><!-- header  -->
