@@ -1,0 +1,24 @@
+{{extend 'layout_add_region.html'}}
+
+<h1>Add a Region</h1>
+ 
+	   <p> 
+		<span class="instruction">Instructions:</span> 
+		Left click on the map to create markers, when last marker meets first marker, it will form a polygon.
+		Right click on the polygon to change its color.
+		</p>  
+	<div id="side"> 
+		<input id="reset" value="Reset" type="button" class="navi"/> 
+		<input id="showData"  value="Add Polygon Data to Form" type="button" class="navi"/> <!-- Show Paths (class function) -->
+		<!-- input id="showColor"  value="Show Color (class function) " type="button" class="navi"/ --> 
+		<!-- div   id="dataPanel" --> 
+		<!-- /div --> 
+	</div> 
+	<div id="main-map" style="width:100%; height:400px">
+	</div> 
+
+<p>
+<a href="http://www.the-di-lab.com/polygon/" target="_blank">Polygon Creator Class (For Google Map API v3) by The-Di-Lab</a>
+</p>
+{{=form}}
+

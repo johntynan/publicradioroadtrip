@@ -1,0 +1,66 @@
+{{extend 'layout_view_story.html'}}
+
+{{for story in story_list:}}
+<ul>
+    <li>
+        <a href="{{=story['audio_url']}}" target="_blank">Download Audio</a>
+    </li>
+    <li>
+        <a href="http://pdfcrowd.com/url_to_pdf/">View as PDF</a>
+    </li>
+</ul>
+{{pass}}
+
+  <div id="map" style="height:400px"> 
+    <div id="map_canvas" style="width:100%; height:400px"></div> 
+    <div id="crosshair"></div> 
+  </div>
+ 
+{{for story in story_list:}}
+ 
+<div style="padding:10px;">
+
+<h2>{{=story['title']}}</h2>
+
+<h3>Description</h3>
+<div>
+{{=story['description']}}
+</div>
+
+<h3>Audio</h3>
+<h4>Scan for Audio</h4>
+<div>
+<script type="text/javascript">
+document.write('<img src=\"http://chart.apis.google.com/chart?chs=400x400&cht=qr&chl={{=story['audio_url']}}\">');
+</script>
+<h4>Dowload</h4>
+<ul>
+    <li>
+        <a href="{{=story['audio_url']}}" target="_blank">Download Audio</a>
+    </li>
+</ul>
+</div>
+
+<h3>Location</h3>
+<div>
+
+Latitude: {{=story['latitude']}}<br />
+Longitude: {{=story['longitude']}}<br />
+Address: {{=story['address']}}<br />
+</div>
+
+<h3>Collection</h3> 
+<div> 
+This story is part of the Collection: <a href="../view_collection/{{=collection}}">{{=collection}}</a> 
+</div> 
+
+</div>
+ 
+ 
+{{pass}}
+ 
+ 
+ 
+<!--
+BEAUTIFY(response._vars)
+--> 

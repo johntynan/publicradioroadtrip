@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<gpx
+ version="1.0"
+ creator="Public Radio Roadtrip"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xmlns="http://www.topografix.com/GPX/1/0"
+ xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd">
+    {{for story in story_list:}}
+    <wpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}"> 
+        <ele>-0.0</ele> 
+        <name>{{=story['title']}}</name> 
+        <desc>{{=story['description']}}</desc> 
+        <url>{{=story['audio_url']}}</url> 
+        <sym>Waypoint</sym>
+    </wpt>{{pass}}
+    <trk> 
+        <name>{{=collection.title}}</name> 
+        <trkseg>
+            {{for story in story_list:}}
+            <trkpt lat="{{=story['latitude']}}" lon="{{=story['longitude']}}"> 
+                <ele>0.0</ele> 
+            </trkpt>{{pass}} 
+        </trkseg> 
+    </trk> 
+</gpx>
+
