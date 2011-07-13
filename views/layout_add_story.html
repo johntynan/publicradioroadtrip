@@ -129,7 +129,9 @@
 	  <a href="http://www.web2py.com/" style="float: left; padding-right: 6px;">
 	    <img src="{{=URL('static','images/poweredby.png')}}"/>
 	  </a>
-	  {{=T('Copyright')}} &#169; 2010				
+	  {{=T('Copyright')}} &#169; 2010
+      {{include 'google_group.html'}}				
+				
 	  <div style="clear: both;"></div><!-- Clear the divs -->
 	  {{end}}
 
@@ -146,7 +148,7 @@
 	 change the UA-XXXXX-X to be your site's ID -->
     <!--   
 	   <script>
-	     var _gaq = [['_setAccount', 'UA-XXXXX-X'], ['_trackPageview']];
+	     var _gaq = [['_setAccount', '{{=google_analytics_id}}'], ['_trackPageview']];
 	     (function(d, t) {
 	     var g = d.createElement(t),
 	     s = d.getElementsByTagName(t)[0];

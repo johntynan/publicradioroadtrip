@@ -11,6 +11,9 @@
 
 # import os
 
+# declare your google analytics id as a global variable 
+google_analytics_id = 'UA-1449777-15'
+
 import uuid
 
 from gluon.tools import *
