@@ -481,15 +481,15 @@ def format_npr_story(nprid, story_id):
     else:
         image_url = results['list']['story'][0]['image'][0]['src']
 
-    # get image
+    # get audio
     try:
-        results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+        results['list']['story'][0]['audio'][0]['format']['mp3'][0]['$text']
     except KeyError:
         audio_url = ''
     else:
-        audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+        audio_url = results['list']['story'][0]['audio'][0]['format']['mp3'][0]['$text']
 
-    # print(image_url)
+    # print(audio_url)
 
     # get topic
     topics=story.topic
