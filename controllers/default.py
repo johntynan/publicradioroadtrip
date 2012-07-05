@@ -742,11 +742,11 @@ def format_audio_url(story_id):
     
         # get audio
         try:
-            results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+            results['list']['story'][0]['audio'][0]['format']['mp3'][0]['$text']
         except KeyError:
             audio_url = ''
         else:
-            audio_url = results['list']['story'][0]['audio'][0]['format']['mp3']['$text']
+            audio_url = results['list']['story'][0]['audio'][0]['format']['mp3'][0]['$text']
     else:
         if story.audio != '':
             audio_url = '../download/' + story.audio
