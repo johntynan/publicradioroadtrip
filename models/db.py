@@ -74,3 +74,6 @@ crud.settings.auth = None                      # =auth to enforce authorization 
 ## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
+
+# temporarily allowing generic views to make code compatible with versions of web2py beyond 1.96.1
+response.generic_patterns = ['*']
