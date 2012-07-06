@@ -13,6 +13,8 @@ import gluon.contrib.rss2 as rss2
 import time, datetime, uuid, StringIO
 from sets import Set
 
+import simplejson
+
 #############
 # begin PyGeoRSSGen
 # https://github.com/JoeGermuska/pygeorss
