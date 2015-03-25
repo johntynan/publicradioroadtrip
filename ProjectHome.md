@@ -1,0 +1,1 @@
+Using the NPR API, KCRW's NPRAPI python module web2py and GAE we can create a fun app for public radio listeners to Map, Publish and share their favorite Public Radio stories from NPR.org as collections of Roadtrips to be viewed on maps and in various other ways.
